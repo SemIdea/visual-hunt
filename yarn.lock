@@ -472,6 +472,38 @@
     postcss "^8.4.41"
     tailwindcss "4.1.5"
 
+"@tanstack/query-core@5.75.0":
+  version "5.75.0"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.75.0.tgz#6a29620a58cf91cac5f804dde44bb8904df071d7"
+  integrity sha512-rk8KQuCdhoRkzjRVF3QxLgAfFUyS0k7+GCQjlGEpEGco+qazJ0eMH6aO1DjDjibH7/ik383nnztua3BG+lOnwg==
+
+"@tanstack/react-query@^5.75.1":
+  version "5.75.1"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.75.1.tgz#8a0b7bac5ef85c3527d7baed81a6f1985e74e096"
+  integrity sha512-tN+gG+eXCHYm+VpmdXUP1rfE9LUrRzgYozTkBZtJV1/WFM3vwWNKQC8G6b2RKcs+2cPg+hdToZHZfjL3bF4yIQ==
+  dependencies:
+    "@tanstack/query-core" "5.75.0"
+
+"@trpc/client@^11.1.2":
+  version "11.1.2"
+  resolved "https://registry.yarnpkg.com/@trpc/client/-/client-11.1.2.tgz#4119238d569281692e7aea843fdad128e0fe3cec"
+  integrity sha512-RpifJOAv+ql9gF3oafa3dLCF01AzWu2DzejvehAPG2IlwHxopKoYXaImJ8zPwRkZokuWiKz5v65HjElmi8TlrQ==
+
+"@trpc/next@^11.1.2":
+  version "11.1.2"
+  resolved "https://registry.yarnpkg.com/@trpc/next/-/next-11.1.2.tgz#ad44757d13c9abf318bcf65aecd8a4448fec5753"
+  integrity sha512-dtk8p/al4p5BU4Otol8ufM3sjuJT/1do0wR912OjetRLwG0Y41FTwhUeXcfLpUMjWUWy+dnCwG8aH/sDvLO5RQ==
+
+"@trpc/react-query@^11.1.2":
+  version "11.1.2"
+  resolved "https://registry.yarnpkg.com/@trpc/react-query/-/react-query-11.1.2.tgz#4adfa7519714cd5f24c898115c22fe6d10c93294"
+  integrity sha512-Ws3oIaj0qqbVIUyfYd9uFBwqk7eRqsxaLhLKN7grskoBo8wkh/CUADcN6ZD+GGogC3Dsg9S4WhgU1jVgfc/ahg==
+
+"@trpc/server@^11.1.2":
+  version "11.1.2"
+  resolved "https://registry.yarnpkg.com/@trpc/server/-/server-11.1.2.tgz#2e506f767f6e6189121733dad3daea0a5423b98b"
+  integrity sha512-Oi9zWHG0ZDkbDo4sYkduoV7q4sIe6UwjrRLC91vNMYQK+PVgpbTCmK1laRwewAGu0zaayqcGDosANjceOIC3GA==
+
 "@tybys/wasm-util@^0.9.0":
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/@tybys/wasm-util/-/wasm-util-0.9.0.tgz#3e75eb00604c8d6db470bf18c37b7d984a0e3355"
@@ -3255,7 +3287,7 @@ zod-to-json-schema@^3.24.1:
   resolved "https://registry.yarnpkg.com/zod-to-json-schema/-/zod-to-json-schema-3.24.5.tgz#d1095440b147fb7c2093812a53c54df8d5df50a3"
   integrity sha512-/AuWwMP+YqiPbsJx5D6TfgRTc4kTLjsh5SOcd4bLsfUg2RcEXrFMJl1DGgdHy2aCfsIA/cr/1JM0xcB2GZji8g==
 
-zod@^3.23.8, zod@^3.24.2:
+zod@^3.23.8, zod@^3.24.2, zod@^3.24.3:
   version "3.24.3"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.24.3.tgz#1f40f750a05e477396da64438e0e1c0995dafd87"
   integrity sha512-HhY1oqzWCQWuUqvBFnsyrtZRhyPeR7SUGv+C4+MsisMuVfSPx8HpwWqH8tRahSlt6M3PiFAcoeFhZAqIXTxoSg==
