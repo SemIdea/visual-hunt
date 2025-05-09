@@ -7,16 +7,26 @@
   --color-background: #ffffff;
   --color-foreground: #171717;
   --color-primary: hsl(259, 94%, 51%);
+  --accent: hsl(278 94% 51%);
 }
 
 @theme dark {
-  --color-background: #0a0a0a;
+  --color-background: #09090b;
   --color-foreground: #ededed;
   --color-primary: hsl(259, 94%, 61%);
+  --accent: hsl(278 94% 51%);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  height: 100%;
 }
 
 body {
-  background: var(--color-foreground);
+  background: var(--color-background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
