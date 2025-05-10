@@ -24,12 +24,12 @@ const UploadSection = () => {
                 <Upload className="h-8 w-8 text-primary" />
               </div>
               <div className="space-y-2 text-center">
-                <h3 className="font-medium">Drag & drop your file</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-semibold">Drag & drop your file</h3>
+                <p className="text-sm text-gray-400">
                   Supports images (JPG, PNG, GIF, WebP) and videos (MP4, WebM,
                   MOV)
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-400">
                   Max file size: 10MB
                 </p>
               </div>
@@ -49,10 +49,10 @@ const UploadSection = () => {
                   Select File
                 </Button>
               </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-sm text-gray-400">
                 <FileImage className="h-4 w-4" />
                 <span>Images</span>
-                <span className="text-muted-foreground/50">|</span>
+                <span className="text-gray-400/50">|</span>
                 <FileVideo className="h-4 w-4" />
                 <span>Videos</span>
               </div>
