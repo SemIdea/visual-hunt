@@ -1,3 +1,4 @@
+import Features from "@/components/features";
 import Header from "@/components/header";
 import Slogan from "@/components/slogan";
 import Upload from "@/components/upload/intex";
@@ -8,6 +9,7 @@ export default function Home() {
       <Header />
       <Slogan />
       <Upload />
+      <Features />  
     </div>
   );
 }
