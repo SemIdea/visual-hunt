@@ -22,7 +22,7 @@ const Header = () => {
               radius="sm"
               startContent={<Home className="h-4 w-4" />}
               color="primary"
-              className="text-black"
+              className="text-zinc-900"
             >
               Home
             </Button>
