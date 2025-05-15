@@ -7,7 +7,6 @@ import { useCallback, useState } from "react";
 
 const UploadSection = () => {
   const router = useRouter();
-  const [selectedTab, setSelectedTab] = useState("upload");
   const [isUploading, setIsUploading] = useState(false);
 
   const handleFilesAccepted = useCallback(
@@ -16,12 +15,9 @@ const UploadSection = () => {
 
       setIsUploading(true);
 
-      // In a real app, we would handle file upload to a server here
-      // For this demo, we'll simulate an upload and redirect to the editor
       setTimeout(() => {
         const fileType = files[0].type.startsWith("image/") ? "image" : "video";
 
-        // Store the file in sessionStorage (in a real app, upload to server and get URL)
         try {
           const reader = new FileReader();
           reader.onload = (e) => {
