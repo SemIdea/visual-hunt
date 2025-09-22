@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-import "./globals.css";
 import Providers from "./providers";
+import Header from "@/components/header";
+import "./globals.css";
+import "react-image-crop/dist/ReactCrop.css";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -22,7 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${roboto.variable} antialiased`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Header />
+          {children}
+        </Providers>
       </body>
     </html>
   );

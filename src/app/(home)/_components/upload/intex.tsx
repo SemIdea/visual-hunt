@@ -59,6 +59,7 @@ const UploadSection = () => {
                   type="file"
                   className="w-full h-full opacity-0 absolute top-0 left-0 cursor-pointer"
                   id="file-upload"
+                  accept="image/*"
                   onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
                       handleFilesAccepted(Array.from(e.target.files));
