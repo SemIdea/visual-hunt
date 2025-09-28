@@ -1,6 +1,6 @@
 import Features from "@/app/(home)/_components/features";
 import Slogan from "@/app/(home)/_components/slogan";
-import Upload from "@/app/(home)/_components/upload/intex copy";
+import Upload from "@/app/(home)/_components/upload/intex";
 
 export default function Home() {
   return (
