@@ -1,7 +1,31 @@
+"use client";
+
+import { trpc } from "@/app/_trpc/client";
 import { Button } from "@heroui/react";
 import { File } from "lucide-react";
+import { useCallback, useState } from "react";
+
+const useUploadImage = () => {
+  const [imageUrl, setImageUrl] = useState("");
+
+  const { mutate: search } = trpc.search.searchWithUrl.useMutation();
+
+  const handleSubmit = useCallback(() => {
+    search({
+      url: imageUrl,
+    });
+  }, [imageUrl]);
+
+  return {
+    imageUrl,
+    setImageUrl,
+    handleSubmit,
+  };
+};
 
 const UrlTab = () => {
+  const { imageUrl, setImageUrl, handleSubmit } = useUploadImage();
+
   return (
     <div className="p-6">
       <div className="grid w-full gap-1.5">
@@ -13,8 +37,14 @@ const UrlTab = () => {
             id="url"
             placeholder="https://example.com/image.jpg"
             className="flex h-10 w-full rounded-md border border-zinc-800 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            onChange={(e) => setImageUrl(e.target.value)}
           />
-          <Button color="primary" radius="sm" className="text-zinc-900">
+          <Button
+            color="primary"
+            radius="sm"
+            className="text-zinc-900"
+            onPress={handleSubmit}
+          >
             <File className="h-7 w-7" />
             Fetch
           </Button>
@@ -22,6 +52,8 @@ const UrlTab = () => {
         <p className="text-xs text-muted-foreground">
           Enter the URL of an image to search
         </p>
+
+        {imageUrl && <img src={imageUrl} />}
       </div>
     </div>
   );
