@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SearchStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model Search {
+  id        String       @id @default(cuid())
+  source    String
+  status    SearchStatus @default(PENDING)
+  results   Result[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  jobId     String
+}
+
+model Result {
+  id       String @id @default(cuid())
+  searchId String
+  search   Search @relation(fields: [searchId], references: [id], onDelete: Cascade)
+
+  position  Int
+  title     String
+  source    String // e.g., "Google Images", "Yandex Images"
+  link      String // Direct link to the image source page
+  thumbnail String // URL for the thumbnail image
+  width     Int
+  height    Int
+
+  @@index([searchId])
+}
+
+// "position": 1,
+// "title": "Cat Memes and Images - Imgur",
+// "source": "Imgur",
+// "source_icon": "https://serpapi.com/searches/68d95c3abca7e5e61e9c5a1a/images/01caffbef4a900ee8ec51027bdf31589afb9e97eaccb217c4cad7c07c47ab585.png",
+// "link": "https://imgur.com/t/cat",
+// "thumbnail": "https://serpapi.com/searches/68d95c3abca7e5e61e9c5a1a/images/01caffbef4a900ee8ec51027bdf31589dc14c2b7253463ee9260b3e6f3104812.jpeg",
+// "actual_image_width": 435,
+// "actual_image_height": 580
