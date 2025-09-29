@@ -1,4 +1,4 @@
-import { tasks } from "@trigger.dev/sdk";
+import { auth, tasks } from "@trigger.dev/sdk";
 import { ISearchWithUrlDTO } from "./DTO";
 import { SearchEntity } from "@/server/entities/search/entity";
 
@@ -12,17 +12,26 @@ const SearchWithUrlTriggerJob = async ({
     type: "exact_matches",
   });
 
-  SearchEntity.create({
+  const publicAccessToken = await auth.createPublicToken({
+    scopes: {
+      read: {
+        runs: job.id,
+      },
+    },
+  });
+
+  const search = await SearchEntity.create({
     id: helpers.uid.generate(),
     data: {
       source: data.url,
       status: "PENDING",
       jobId: job.id,
+      publicAccessToken,
     },
     repositories,
   });
 
-  return job;
+  return search;
 };
 
 export { SearchWithUrlTriggerJob };

@@ -7,6 +7,7 @@ type ISearchEntity = {
   createdAt: Date;
   updatedAt: Date;
   jobId: string;
+  publicAccessToken: string;
 };
 
 type ISearchModel = IEntityDatabaseRepository<ISearchEntity, {}>;
