@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const readSearchByIdSchema = z.object({
+const readSearch = z.object({
   id: z.uuidv4(),
 });
 
@@ -12,8 +12,8 @@ const searchWithUrlSchema = z.object({
     .nonempty("URL is required"),
 });
 
-type ReadSearchByIdInput = z.TypeOf<typeof readSearchByIdSchema>;
+type ReadSearch = z.TypeOf<typeof readSearch>;
 type SearchWithUrlInput = z.TypeOf<typeof searchWithUrlSchema>;
 
-export { searchWithUrlSchema, readSearchByIdSchema };
-export type { SearchWithUrlInput, ReadSearchByIdInput };
+export { searchWithUrlSchema, readSearch };
+export type { SearchWithUrlInput, ReadSearch };
