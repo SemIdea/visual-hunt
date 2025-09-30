@@ -1,10 +1,8 @@
 import { t } from "../createRouter";
-import { readSearchByIdController } from "../features/search/read/controller";
+import { readSearchController } from "../features/search/read/controller";
+import { readSearchWithResultsController } from "../features/search/readWithResults/controller";
 import { searchWithUrlController } from "../features/search/url/controller";
-import {
-  readSearchByIdSchema,
-  searchWithUrlSchema,
-} from "../schema/search.schema";
+import { readSearch, searchWithUrlSchema } from "../schema/search.schema";
 
 const SearchRouter = t.router({
   searchWithUrl: t.procedure
@@ -12,9 +10,14 @@ const SearchRouter = t.router({
     .mutation(async ({ input, ctx }) =>
       searchWithUrlController({ input, ctx })
     ),
-  readSearchById: t.procedure
-    .input(readSearchByIdSchema)
-    .query(async ({ input, ctx }) => readSearchByIdController({ input, ctx })),
+  readSearch: t.procedure
+    .input(readSearch)
+    .query(async ({ input, ctx }) => readSearchController({ input, ctx })),
+  readSearchWithResults: t.procedure
+    .input(readSearch)
+    .query(async ({ input, ctx }) =>
+      readSearchWithResultsController({ input, ctx })
+    ),
 });
 
 export { SearchRouter };

@@ -10,6 +10,39 @@ type ISearchEntity = {
   publicAccessToken: string;
 };
 
-type ISearchModel = IEntityDatabaseRepository<ISearchEntity, {}>;
+type ISearchEntityWithResults = ISearchEntity & {
+  results: Array<{
+    id: string;
+    searchId: string;
+    position: number;
+    title: string;
+    source: string;
+    link: string;
+    thumbnail: string;
+    width: number;
+    height: number;
+  }>;
+};
 
-export type { ISearchEntity, ISearchModel };
+type ISearchExtraRepositories = {
+  readWithResults: (searchId: string) => Promise<ISearchEntity | null>;
+};
+
+type ISearchModel = IEntityDatabaseRepository<
+  ISearchEntity,
+  ISearchExtraRepositories
+>;
+
+type IReadSearchWithResults = {
+  searchId: string;
+  repositories: {
+    database: ISearchModel;
+  };
+};
+
+export type {
+  ISearchEntity,
+  ISearchModel,
+  IReadSearchWithResults,
+  ISearchEntityWithResults,
+};

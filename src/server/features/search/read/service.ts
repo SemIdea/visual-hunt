@@ -1,10 +1,7 @@
 import { SearchEntity } from "@/server/entities/search/entity";
-import { IReadSearchByIdDTO } from "./DTO";
+import { IReadSearchDTO } from "./DTO";
 
-const ReadSearchByIdService = async ({
-  repositories,
-  ...data
-}: IReadSearchByIdDTO) => {
+const ReadSearchService = async ({ repositories, ...data }: IReadSearchDTO) => {
   const search = await SearchEntity.read({
     ...data,
     repositories,
@@ -13,4 +10,4 @@ const ReadSearchByIdService = async ({
   return search;
 };
 
-export { ReadSearchByIdService };
+export { ReadSearchService };

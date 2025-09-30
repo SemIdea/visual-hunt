@@ -1,10 +1,10 @@
 import { ISearchModel } from "@/server/entities/search/DTO";
 
-type IReadSearchDTO = {
+type IReadSearchWithResultsDTO = {
   id: string;
   repositories: {
     database: ISearchModel;
   };
 };
 
-export type { IReadSearchDTO };
+export type { IReadSearchWithResultsDTO };

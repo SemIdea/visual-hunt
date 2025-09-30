@@ -20,6 +20,15 @@ class PrismaSearchModel implements ISearchModel {
     });
   }
 
+  async readWithResults(searchId: string) {
+    return await prisma.search.findUnique({
+      where: { id: searchId },
+      include: {
+        results: true,
+      },
+    });
+  }
+
   async update(
     id: string,
     data: Partial<Omit<ISearchEntity, "id" | "createdAt" | "updatedAt">>
