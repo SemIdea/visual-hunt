@@ -3,7 +3,6 @@
 import { trpc } from "@/app/_trpc/client";
 import { Button } from "@heroui/react";
 import { File } from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
@@ -60,7 +59,7 @@ const UrlTab = () => {
           Enter the URL of an image to search
         </p>
 
-        {imageUrl && <Image src={imageUrl} alt="Preview" />}
+        {imageUrl && <img src={imageUrl} alt="Preview" />}
       </div>
     </div>
   );

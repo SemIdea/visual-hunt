@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 
 const UploadTab = () => {
@@ -70,7 +69,7 @@ const UploadImage = ({
       />
       {image && (
         <>
-          <Image src={image.blob} alt={image.name} />
+          <img src={image.blob} alt={image.name} />
         </>
       )}
     </>
