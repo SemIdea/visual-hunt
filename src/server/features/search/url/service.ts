@@ -7,7 +7,10 @@ const SearchWithUrlTriggerJob = async ({
   helpers,
   ...data
 }: ISearchWithUrlDTO) => {
+  const searchId = helpers.uid.generate();
+
   const job = await tasks.trigger("search-with-google-lens", {
+    searchId,
     imageUrl: data.url,
     type: "exact_matches",
   });
@@ -21,7 +24,7 @@ const SearchWithUrlTriggerJob = async ({
   });
 
   const search = await SearchEntity.create({
-    id: helpers.uid.generate(),
+    id: searchId,
     data: {
       source: data.url,
       status: "PENDING",
