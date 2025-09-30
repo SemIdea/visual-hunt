@@ -33,7 +33,7 @@ type IEntityBasic = {
   id: string;
 };
 
-type IEntityRepositoriesBasic = Record<string, (...args: any) => any>;
+type IEntityRepositoriesBasic = object;
 
 type IEntityRepositories<Entity, Repos extends IEntityRepositoriesBasic> = {
   database: IEntityDatabaseRepository<Entity, Repos>;
@@ -124,7 +124,7 @@ class BaseEntity<
   constructor({
     cache,
     index,
-    shouldCache
+    shouldCache,
   }: {
     cache?: CacheConfig<BaseIndex>;
     index?: IndexConfig<BaseIndex, Indexes>;
@@ -144,7 +144,7 @@ class BaseEntity<
 
   async cacheEntity({
     data,
-    repositories
+    repositories,
   }: ICacheEntityReq<Entity>): Promise<void> {
     if (!this.cache || !repositories.cache || !this.shouldCache) return;
 
@@ -152,19 +152,19 @@ class BaseEntity<
       {
         key: this.resolveKey(this.cache.key, data),
         value: JSON.stringify(data),
-        ttl: this.cache.ttl
-      }
+        ttl: this.cache.ttl,
+      },
     ];
 
     if (this.index) {
-      for (const [_, index] of Object.entries(this.index) as [
+      for (const [indexName, index] of Object.entries(this.index) as [
         string,
         { key: string; ttl: number }
       ][]) {
         keysToCreate.push({
           key: this.resolveKey(index.key, data),
           value: data.id,
-          ttl: index.ttl
+          ttl: index.ttl,
         });
       }
     }
@@ -174,7 +174,7 @@ class BaseEntity<
 
   async readCachedEntity({
     id,
-    repositories
+    repositories,
   }: IReadCachedEntityReq): Promise<Entity | null> {
     if (!this.cache || !repositories.cache || !this.shouldCache) return null;
 
@@ -192,7 +192,7 @@ class BaseEntity<
   async readCachedEntityByIndex({
     indexName,
     indexValue,
-    repositories
+    repositories,
   }: IReadCachedEntityByIndexReq<Indexes>): Promise<Entity | null> {
     if (!this.index || !this.index[indexName] || !this.shouldCache) return null;
 
@@ -225,7 +225,7 @@ class BaseEntity<
 
   async deleteCachedEntity({
     data,
-    repositories
+    repositories,
   }: IDeleteCacheEntityReq<Entity>): Promise<void> {
     if (!this.cache || !repositories.cache || !this.shouldCache) return;
 
@@ -248,11 +248,11 @@ class BaseEntity<
     await this.cacheEntity({
       data: {
         ...data,
-        id
+        id,
       } as Entity,
       repositories: {
-        cache: repositories.cache!
-      }
+        cache: repositories.cache!,
+      },
     });
 
     return entity;
@@ -262,8 +262,8 @@ class BaseEntity<
     const cachedEntity = await this.readCachedEntity({
       id,
       repositories: {
-        cache: repositories.cache!
-      }
+        cache: repositories.cache!,
+      },
     });
 
     if (cachedEntity) return cachedEntity;
@@ -275,8 +275,8 @@ class BaseEntity<
     await this.cacheEntity({
       data: entity,
       repositories: {
-        cache: repositories.cache!
-      }
+        cache: repositories.cache!,
+      },
     });
 
     return entity;
@@ -288,8 +288,8 @@ class BaseEntity<
     await this.cacheEntity({
       data: entity,
       repositories: {
-        cache: repositories.cache!
-      }
+        cache: repositories.cache!,
+      },
     });
 
     return entity;
@@ -299,8 +299,8 @@ class BaseEntity<
     await this.deleteCachedEntity({
       data,
       repositories: {
-        cache: repositories.cache!
-      }
+        cache: repositories.cache!,
+      },
     });
 
     return await repositories.database.delete(id);
@@ -316,5 +316,5 @@ export type {
   IEntityUpdateReq,
   IEntityDeleteReq,
   IEntityDatabaseRepository,
-  IEntityCacheRepository
+  IEntityCacheRepository,
 };

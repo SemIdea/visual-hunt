@@ -9,7 +9,9 @@ type ISearchEntityWithResults = ISearchEntity & {
 };
 
 type ISearchExtraRepositories = {
-  readWithResults: (searchId: string) => Promise<ISearchEntity | null>;
+  readWithResults: (
+    searchId: string
+  ) => Promise<ISearchEntityWithResults | null>;
 };
 
 type ISearchModel = IEntityDatabaseRepository<

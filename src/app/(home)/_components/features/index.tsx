@@ -1,4 +1,4 @@
-import { CropIcon, Image, Search, Upload, Video, Wand2 } from "lucide-react";
+import { CropIcon, Image as ImageIcon, Search, Upload, Video, Wand2 } from "lucide-react";
 import FeatureCard from "./card";
 
 const Features = () => {
@@ -28,7 +28,7 @@ const Features = () => {
           description="Find visually similar content from across the web"
         />
         <FeatureCard
-          icon={<Image />}
+          icon={<ImageIcon />}
           title="Image Support"
           description="Upload JPG, PNG, GIF, WebP and other popular formats"
         />

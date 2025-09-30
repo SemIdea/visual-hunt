@@ -1,6 +1,7 @@
 import { createCaller } from "@/server/caller";
 import DisplayResults from "./displayResults";
 import RunStatus from "./runStatus";
+import Image from "next/image";
 
 type PageProps = {
   params: Promise<{
@@ -21,7 +22,7 @@ const Page = async (props: PageProps) => {
   return (
     <section className="mt-16 flex">
       <div>
-        <img className="h-[500px]" src={search.source} />
+        <Image className="h-[500px]" src={search.source} alt="" />
       </div>
       <div className="flex flex-col gap-3">
         {search.status == "COMPLETED" && (
