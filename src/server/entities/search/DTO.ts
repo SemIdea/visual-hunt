@@ -1,27 +1,11 @@
 import { IEntityDatabaseRepository } from "../base/entity";
+import type { Search } from "@prisma/client";
+import { IResultEntity } from "../result/DTO";
 
-type ISearchEntity = {
-  id: string;
-  source: string;
-  status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
-  createdAt: Date;
-  updatedAt: Date;
-  jobId: string;
-  publicAccessToken: string;
-};
+type ISearchEntity = Search;
 
 type ISearchEntityWithResults = ISearchEntity & {
-  results: Array<{
-    id: string;
-    searchId: string;
-    position: number;
-    title: string;
-    source: string;
-    link: string;
-    thumbnail: string;
-    width: number;
-    height: number;
-  }>;
+  results: Array<IResultEntity>;
 };
 
 type ISearchExtraRepositories = {

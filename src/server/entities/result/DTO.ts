@@ -1,16 +1,7 @@
+import type { Result } from "@prisma/client";
 import { IEntityDatabaseRepository } from "../base/entity";
 
-type IResultEntity = {
-  id: string;
-  searchId: string;
-  position: number;
-  title: string;
-  source: string;
-  link: string;
-  thumbnail: string;
-  width: number;
-  height: number;
-};
+type IResultEntity = Result;
 
 type IResultModel = IEntityDatabaseRepository<IResultEntity, {}>;
 
