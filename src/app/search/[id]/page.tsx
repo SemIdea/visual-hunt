@@ -1,4 +1,5 @@
 import { createCaller } from "@/server/caller";
+import DisplayResults from "./displayResults";
 import RunStatus from "./runStatus";
 
 type PageProps = {
@@ -11,23 +12,29 @@ const Page = async (props: PageProps) => {
   const params = await props.params;
   const caller = await createCaller();
 
-  const search = await caller.search.readSearchById({
+  const search = await caller.search.readSearchWithResults({
     id: params.id,
   });
 
-  if (!search) return null;
+  if (!search) return;
 
   return (
-    <section className="mt-16">
-      <h2>{params.id}</h2>
-      {/* <div>{JSON.stringify(search)}</div> */}
+    <section className="mt-16 flex">
       <div>
-        <p>
-          Status <span>{search.status}</span>
-        </p>
-        <img src={search.source} />
+        <img className="h-[500px]" src={search.source} />
       </div>
-      <RunStatus jobId={search.jobId} publicAccesToken={search.publicAccessToken}/>
+      <div className="flex flex-col gap-3">
+        {search.status == "COMPLETED" && (
+          <DisplayResults results={search.results} />
+        )}
+        {search.status !== "COMPLETED" && (
+          <RunStatus
+            jobId={search.jobId}
+            publicAccesToken={search.publicAccessToken}
+            searchId={search.id}
+          />
+        )}
+      </div>
     </section>
   );
 };
