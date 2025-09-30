@@ -3,12 +3,18 @@
 import { trpc } from "@/app/_trpc/client";
 import { Button } from "@heroui/react";
 import { File } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
 const useUploadImage = () => {
+  const router = useRouter();
   const [imageUrl, setImageUrl] = useState("");
 
-  const { mutate: search } = trpc.search.searchWithUrl.useMutation();
+  const { mutate: search } = trpc.search.searchWithUrl.useMutation({
+    onSuccess: (data) => {
+      router.push(`/search/${data.id}`);
+    },
+  });
 
   const handleSubmit = useCallback(() => {
     search({
