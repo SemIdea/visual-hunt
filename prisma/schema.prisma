@@ -15,7 +15,7 @@ enum SearchStatus {
 }
 
 model Search {
-  id                String       @id @default(cuid())
+  id                String       @id
   source            String
   status            SearchStatus @default(PENDING)
   results           Result[]
@@ -26,7 +26,7 @@ model Search {
 }
 
 model Result {
-  id       String @id @default(cuid())
+  id       String @id
   searchId String
   search   Search @relation(fields: [searchId], references: [id], onDelete: Cascade)
 
