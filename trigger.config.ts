@@ -1,6 +1,5 @@
 import { defineConfig } from "@trigger.dev/sdk/v3";
-import { puppeteer } from "@trigger.dev/build/extensions/puppeteer";
-
+import { prismaExtension } from "@trigger.dev/build/extensions/prisma";
 
 export default defineConfig({
   project: "proj_mqodpcncvrqcxgkmklfy",
@@ -22,6 +21,10 @@ export default defineConfig({
   },
   dirs: ["./src/trigger"],
   build: {
-    extensions: [puppeteer()],
+    extensions: [
+      prismaExtension({
+        schema: "./prisma/schema.prisma",
+      }),
+    ],
   },
 });
