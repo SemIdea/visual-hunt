@@ -2,13 +2,15 @@
   "name": "visual-hunt",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky",
-    "trigger:dev": "npx trigger.dev@latest dev"
+    "trigger:dev": "npx trigger.dev@latest dev",
+    "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
     "@heroui/react": "^2.8.0-beta.4",
