@@ -2,12 +2,18 @@
 
 import TrpcProvider from "@/context/trpc";
 import { HeroUIProvider } from "@heroui/react";
+import { getServerSession } from "next-auth";
+import { SessionProvider } from "next-auth/react";
 
-function Providers({ children }: { children: React.ReactNode }) {
+async function Providers({ children }: { children: React.ReactNode }) {
+  const session = await getServerSession();
+
   return (
-    <HeroUIProvider>
-      <TrpcProvider>{children}</TrpcProvider>
-    </HeroUIProvider>
+    <SessionProvider session={session}>
+      <HeroUIProvider>
+        <TrpcProvider>{children}</TrpcProvider>
+      </HeroUIProvider>
+    </SessionProvider>
   );
 }
 
