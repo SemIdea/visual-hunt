@@ -1,19 +1,19 @@
-import { t } from "../createRouter";
+import { protectedProcedure, t } from "../createRouter";
 import { readSearchController } from "../features/search/read/controller";
 import { readSearchWithResultsController } from "../features/search/readWithResults/controller";
 import { searchWithUrlController } from "../features/search/url/controller";
 import { readSearch, searchWithUrlSchema } from "../schema/search.schema";
 
 const SearchRouter = t.router({
-  searchWithUrl: t.procedure
+  searchWithUrl: protectedProcedure
     .input(searchWithUrlSchema)
     .mutation(async ({ input, ctx }) =>
       searchWithUrlController({ input, ctx })
     ),
-  readSearch: t.procedure
+  readSearch: protectedProcedure
     .input(readSearch)
     .query(async ({ input, ctx }) => readSearchController({ input, ctx })),
-  readSearchWithResults: t.procedure
+  readSearchWithResults: protectedProcedure
     .input(readSearch)
     .query(async ({ input, ctx }) =>
       readSearchWithResultsController({ input, ctx })
