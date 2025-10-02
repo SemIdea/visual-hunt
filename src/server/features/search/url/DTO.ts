@@ -3,6 +3,7 @@ import { IUidGeneratorHelperAdapter } from "@/server/integrations/helpers/uidGen
 
 type ISearchWithUrlDTO = {
   url: string;
+  userId: string;
   repositories: {
     database: ISearchModel;
   };

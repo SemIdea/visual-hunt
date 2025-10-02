@@ -1,4 +1,4 @@
-import { protectedProcedure, t } from "../createRouter";
+import { protectedProcedure, publicProcedure, t } from "../createRouter";
 import { readSearchController } from "../features/search/read/controller";
 import { readSearchWithResultsController } from "../features/search/readWithResults/controller";
 import { searchWithUrlController } from "../features/search/url/controller";
@@ -10,10 +10,10 @@ const SearchRouter = t.router({
     .mutation(async ({ input, ctx }) =>
       searchWithUrlController({ input, ctx })
     ),
-  readSearch: protectedProcedure
+  readSearch: publicProcedure
     .input(readSearch)
     .query(async ({ input, ctx }) => readSearchController({ input, ctx })),
-  readSearchWithResults: protectedProcedure
+  readSearchWithResults: publicProcedure
     .input(readSearch)
     .query(async ({ input, ctx }) =>
       readSearchWithResultsController({ input, ctx })

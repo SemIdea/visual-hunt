@@ -26,6 +26,7 @@ const SearchWithUrlTriggerJob = async ({
   const search = await SearchEntity.create({
     id: searchId,
     data: {
+      userId: data.userId,
       source: data.url,
       status: "PENDING",
       jobId: job.id,
