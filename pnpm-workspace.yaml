@@ -1,0 +1,9 @@
+ignoredBuiltDependencies:
+  - '@heroui/shared-utils'
+  - '@prisma/client'
+  - '@prisma/engines'
+  - bcrypt
+  - prisma
+  - protobufjs
+  - sharp
+  - unrs-resolver
