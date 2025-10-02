@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Search, Upload, Home } from "lucide-react";
-import { Button } from "@heroui/react";
 
 const Header = () => {
   return (

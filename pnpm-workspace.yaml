@@ -1,5 +1,4 @@
 ignoredBuiltDependencies:
-  - '@heroui/shared-utils'
   - '@prisma/client'
   - '@prisma/engines'
   - bcrypt

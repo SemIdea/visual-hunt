@@ -1,7 +1,6 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-import { Button } from "@heroui/react";
 import { File } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";

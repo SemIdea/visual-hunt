@@ -1,7 +1,6 @@
 "use client";
 
 import TrpcProvider from "@/context/trpc";
-import { HeroUIProvider } from "@heroui/react";
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { ReactNode } from "react";
@@ -15,9 +14,7 @@ function Providers({
 }) {
   return (
     <SessionProvider session={session}>
-      <HeroUIProvider>
-        <TrpcProvider>{children}</TrpcProvider>
-      </HeroUIProvider>
+      <TrpcProvider>{children}</TrpcProvider>
     </SessionProvider>
   );
 }
