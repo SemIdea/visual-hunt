@@ -1,9 +1,11 @@
+import { ReactNode } from "react";
+
 const FeatureCard = ({
   icon,
   title,
   description,
 }: {
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
   description: string;
 }) => {

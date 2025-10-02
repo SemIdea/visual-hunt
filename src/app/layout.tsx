@@ -3,10 +3,10 @@ import { Roboto } from "next/font/google";
 import Providers from "./providers";
 import Header from "@/components/header";
 import { getServerSession } from "next-auth";
-import { SessionProvider } from "next-auth/react";
 import "./globals.css";
 import "react-image-crop/dist/ReactCrop.css";
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import { authOptions } from "./api/auth/[...nextauth]/authOptions";
+import { ReactNode } from "react";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   const session = await getServerSession(authOptions);
 

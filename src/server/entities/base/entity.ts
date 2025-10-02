@@ -157,6 +157,7 @@ class BaseEntity<
     ];
 
     if (this.index) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for (const [indexName, index] of Object.entries(this.index) as [
         string,
         { key: string; ttl: number }

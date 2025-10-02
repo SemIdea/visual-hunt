@@ -69,6 +69,7 @@ const UploadImage = ({
       />
       {image && (
         <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={image.blob} alt={image.name} />
         </>
       )}

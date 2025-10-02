@@ -21,6 +21,7 @@ const Page = async (props: PageProps) => {
   return (
     <section className="mt-16 flex">
       <div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="h-[500px]" src={search.source} alt="" />
       </div>
       <div className="flex flex-col gap-3">

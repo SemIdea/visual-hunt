@@ -1,6 +1,6 @@
 "use client";
 
-import { Tab, Tabs } from "@heroui/react";
+// import { Tab, Tabs } from "@heroui/react";
 import UrlTab from "./url";
 
 const UploadSectionCopy = () => {

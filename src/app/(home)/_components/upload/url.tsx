@@ -58,7 +58,8 @@ const UrlTab = () => {
         <p className="text-xs text-muted-foreground">
           Enter the URL of an image to search
         </p>
-
+        
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         {imageUrl && <img src={imageUrl} alt="Preview" />}
       </div>
     </div>

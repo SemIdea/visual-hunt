@@ -1,8 +1,8 @@
 import { getServerSession } from "next-auth";
 import { helpers, IHelpers } from "./container/helpers";
 import { IRepositories, repositories } from "./container/repositories";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { UserEntity } from "./entities/user/entity";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 
 type IBaseContextDTO = {
   helpers: IHelpers;
@@ -38,7 +38,7 @@ const createTRPCContext = async (): Promise<IAPIContextDTO> => {
   if (!user) return ctx;
 
   ctx.userId = user.id;
-  
+
   return ctx;
 };
 

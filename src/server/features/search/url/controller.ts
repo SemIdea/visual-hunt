@@ -1,6 +1,6 @@
 import { SearchWithUrlInput } from "@/server/schema/search.schema";
 import { SearchWithUrlTriggerJob } from "./service";
-import { IAPIContextDTO, IProtectedAPIContextDTO } from "@/server/createContex";
+import { IProtectedAPIContextDTO } from "@/server/createContex";
 
 const searchWithUrlController = async ({
   input,

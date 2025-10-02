@@ -4,12 +4,13 @@ import TrpcProvider from "@/context/trpc";
 import { HeroUIProvider } from "@heroui/react";
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
+import { ReactNode } from "react";
 
 function Providers({
   session,
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   session: Session | null;
 }) {
   return (

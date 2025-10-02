@@ -1,12 +1,17 @@
 import { defineConfig } from "eslint/config";
+import { FlatCompat } from "@eslint/eslintrc";
+
+const compat = new FlatCompat({
+  baseDirectory: import.meta.dirname,
+});
 
 export default defineConfig([
-  {
-    extends: ["plugin:@next/next/recommended"],
+  ...compat.config({
+    extends: ["next/core-web-vitals", "next/typescript"],
     rules: {
-      "no-unused-vars": "warn",
-      "no-undef": "warn",
-      "no-empty-object-type": "warn",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@/no-undef": "warn",
+      "@typescript-eslint/no-empty-object-type": "warn",
     },
-  },
+  }),
 ]);
