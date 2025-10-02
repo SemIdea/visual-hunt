@@ -1,6 +1,7 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
+import { Button } from "@/components/ui/button";
 import { File } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
@@ -46,9 +47,8 @@ const UrlTab = () => {
           />
           <Button
             color="primary"
-            radius="sm"
             className="text-zinc-900"
-            onPress={handleSubmit}
+            // onPress={handleSubmit}
           >
             <File className="h-7 w-7" />
             Fetch
@@ -57,7 +57,7 @@ const UrlTab = () => {
         <p className="text-xs text-muted-foreground">
           Enter the URL of an image to search
         </p>
-        
+
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {imageUrl && <img src={imageUrl} alt="Preview" />}
       </div>

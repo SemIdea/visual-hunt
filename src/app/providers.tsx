@@ -4,17 +4,23 @@ import TrpcProvider from "@/context/trpc";
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { ReactNode } from "react";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+
+type ProvidersProps = {
+  session: Session | null;
+  children: ReactNode;
+} & React.ComponentProps<typeof NextThemesProvider>;
 
 function Providers({
   session,
   children,
-}: {
-  children: ReactNode;
-  session: Session | null;
-}) {
+  ...themeProps
+}: ProvidersProps): React.ReactNode {
   return (
     <SessionProvider session={session}>
-      <TrpcProvider>{children}</TrpcProvider>
+      <TrpcProvider>
+        <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+      </TrpcProvider>
     </SessionProvider>
   );
 }

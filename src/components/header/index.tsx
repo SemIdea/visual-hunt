@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Upload, Home } from "lucide-react";
+import { Search } from "lucide-react";
+import { ModeToggle } from "../ui/modetoggle";
 
 const Header = () => {
   return (
@@ -14,31 +15,8 @@ const Header = () => {
           </span>
         </Link>
 
-        <nav className="flex items-center space-x-1 sm:space-x-2">
-          <Link href="/">
-            <Button
-              size="md"
-              radius="sm"
-              startContent={<Home className="h-4 w-4" />}
-              color="primary"
-              className="text-zinc-900"
-            >
-              Home
-            </Button>
-          </Link>
-
-          <Link href="/editor">
-            <Button
-              size="md"
-              radius="sm"
-              startContent={<Upload className="h-4 w-4" />}
-              variant="light"
-            >
-              Upload
-            </Button>
-          </Link>
-
-          {/* <ModeToggle /> */}
+        <nav className="flex items-center space-x-2">
+          <ModeToggle />
         </nav>
       </div>
     </header>
