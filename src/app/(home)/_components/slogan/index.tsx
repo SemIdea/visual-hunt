@@ -1,6 +1,6 @@
 const Slogan = () => {
   return (
-    <section className="my-16 pt-12 text-center flex flex-col gap-6">
+    <section className="my-16 text-center flex flex-col gap-6">
       <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary">
         Visual Hunt
       </h1>

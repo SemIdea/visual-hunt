@@ -3,8 +3,12 @@
 import Link from "next/link";
 import { Search } from "lucide-react";
 import { ModeToggle } from "../ui/modetoggle";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { Button } from "../ui/button";
 
 const Header = () => {
+  const session = useSession();
+
   return (
     <header className="fixed top-0 left-0 right-0 h-16 border-b border-b-zinc-800 backdrop-blur-md bg-background/90 z-50 flex justify-center">
       <div className="container max-w-5xl h-full flex items-center justify-between">
@@ -16,6 +20,26 @@ const Header = () => {
         </Link>
 
         <nav className="flex items-center space-x-2">
+          <div>
+            {session?.data ? (
+              <>
+                <span className="text-sm">
+                  Hello, {session.data.user?.name}
+                </span>
+                <Button
+                  variant="outline"
+                  className="ml-4 cursor-pointer"
+                  onClick={() => signOut()}
+                >
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Button className="dark:text-white cursor-pointer">
+                <Link href="/auth/login">Login</Link>
+              </Button>
+            )}
+          </div>
           <ModeToggle />
         </nav>
       </div>
