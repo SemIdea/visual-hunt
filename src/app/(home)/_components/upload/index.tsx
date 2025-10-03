@@ -1,17 +1,24 @@
 "use client";
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UrlTab from "./url";
+import { Card, CardHeader } from "@/components/ui/card";
 
 const UploadSectionCopy = () => {
   return (
-    <div className="border-1 border-zinc-800 rounded-t-2xl rounded-b-md max-w-3xl w-full">
-      {/* <Tabs radius="sm" fullWidth>
-        <Tab key="upload" title="Upload File">
-          <UploadTab />
-        </Tab>
-        <Tab key="url" title="URL"></Tab>
-      </Tabs> */}
-      <UrlTab />
+    <div className="flex w-full max-w-sm flex-col gap-6">
+      <Tabs defaultValue="url">
+        <TabsList className="w-full">
+          <TabsTrigger value="url">Url</TabsTrigger>
+        </TabsList>
+        <TabsContent value="url">
+          <Card>
+            <CardHeader>
+              <UrlTab />
+            </CardHeader>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
