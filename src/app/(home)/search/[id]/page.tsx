@@ -2,6 +2,7 @@ import { createCaller } from "@/server/caller";
 import DisplayResults from "./displayResults";
 import RunStatus from "./runStatus";
 import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type PageProps = {
   params: Promise<{
@@ -23,6 +24,15 @@ const Page = async (props: PageProps) => {
     <section className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-8">
         <div className="lg:sticky lg:top-24 lg:self-start">
+          <div className="flex items-center gap-3 mb-6">
+            <Avatar className="h-10 w-10">
+              <AvatarImage src="" alt="User" />
+              <AvatarFallback>YU</AvatarFallback>
+            </Avatar>
+            <span className="text-lg font-medium text-foreground">
+              Your Search Results
+            </span>
+          </div>
           <Card className="overflow-hidden">
             <CardContent className="p-0">
               <div className="relative w-full">
