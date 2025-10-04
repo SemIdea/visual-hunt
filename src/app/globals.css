@@ -37,6 +37,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --base-arc: color-mix(in srgb, var(--primary) 30%, white 70%);
 }
 
 .dark {
@@ -73,6 +74,7 @@
   --sidebar-accent-foreground: oklch(0.98 0 0);
   --sidebar-border: oklch(0.2 0 0);
   --sidebar-ring: oklch(0.65 0.25 280);
+  --base-arc: oklch(1 0 0);
 }
 
 @theme inline {
@@ -114,6 +116,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-base-arc: var(--base-arc);
 }
 
 @layer base {

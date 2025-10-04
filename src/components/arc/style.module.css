@@ -21,7 +21,7 @@
 .elipse1 {
   z-index: 5;
   margin-top: -16px;
-  border: 28px solid white;
+  border: 28px solid var(--color-base-arc);
 }
 
 .elipse2 {
