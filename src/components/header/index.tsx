@@ -27,12 +27,12 @@ const Header = () => {
               >
                 Pricing
               </Link>
-              <a
-                href="#faq"
+              <Link
+                href="/#faq"
                 className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
                 FAQ
-              </a>
+              </Link>
             </div>
           </div>
           <div className="flex items-center gap-3">
