@@ -1,12 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { Field, FieldDescription, FieldGroup } from "@/components/ui/field";
 import { getProviders, signIn } from "next-auth/react";
 
 const LoginForm = ({

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Search } from "lucide-react";
 import { ModeToggle } from "../ui/modetoggle";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { Button } from "../ui/button";
 
 const Header = () => {
