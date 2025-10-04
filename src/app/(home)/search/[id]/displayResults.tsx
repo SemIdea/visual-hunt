@@ -1,14 +1,40 @@
-
+import { Card, CardContent } from "@/components/ui/card";
 import { IResultEntity } from "@/server/entities/result/DTO";
+import { ExternalLink } from "lucide-react";
+import Link from "next/link";
 
 const DisplayResults = ({ results }: { results: IResultEntity[] }) => {
-  return results.map((s, i) => (
-    <div key={i}>
-      <h2>{s.title}</h2>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={s.thumbnail} alt="" />
-      <a href={s.link}>{s.link}</a>
-    </div>
+  return results.map((result) => (
+    <Card
+      key={result.id}
+      className="break-inside-avoid overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:shadow-primary/20"
+    >
+      <CardContent className="p-0">
+        <Link href={result.link} className="block" target="_blank">
+          <div className="relative w-full">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={
+                result.thumbnail || "https://placehold.co/600x400?text=No+Image"
+              }
+              alt={result.title}
+              width={300}
+              height={400}
+              className="w-full h-auto object-cover"
+            />
+          </div>
+          <div className="px-4 space-y-2">
+            <h3 className="font-semibold text-foreground line-clamp-2 break-words">
+              {result.title}
+            </h3>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <ExternalLink className="w-4 h-4" />
+              <span>{result.source}</span>
+            </div>
+          </div>
+        </Link>
+      </CardContent>
+    </Card>
   ));
 };
 
