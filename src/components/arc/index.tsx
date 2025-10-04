@@ -3,7 +3,7 @@ import styles from "./style.module.css";
 
 const Arc = () => {
   return (
-    <div className="w-full h-full absolute overflow-hidden">
+    <div className="w-full h-full absolute overflow-hidden z-0">
       <div className={styles.container}>
         <div className={cn(styles.elipse, styles.elipse1)}></div>
         <div className={cn(styles.elipse, styles.elipse2)}></div>

@@ -21,6 +21,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import Arc from "@/components/arc";
 
 export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false);
@@ -37,8 +38,9 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Arc />
       {/* Header */}
-      <div className="container mx-auto px-4 py-16 md:py-24">
+      <div className="container mx-auto px-4 py-16 md:py-24 relative z-2">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-balance">
             Find the Perfect Plan
@@ -70,11 +72,10 @@ export default function PricingPage() {
             </Label>
           </div>
         </div>
-
         {/* Pricing Cards */}
         <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-20">
           {/* Free Plan */}
-          <Card className="flex flex-col">
+          <Card className="flex flex-col bg-card/80 backdrop-blur-xl">
             <CardHeader>
               <CardTitle className="text-2xl">Free</CardTitle>
               <CardDescription>
@@ -117,7 +118,7 @@ export default function PricingPage() {
           </Card>
 
           {/* Pro Plan - Highlighted */}
-          <Card className="flex flex-col border-primary shadow-lg shadow-primary/20 md:scale-105 relative">
+          <Card className="flex flex-col border-primary shadow-lg shadow-primary/20 md:scale-105 bg-card/80 backdrop-blur-xl">
             <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
               Most Popular
             </Badge>
@@ -172,7 +173,7 @@ export default function PricingPage() {
           </Card>
 
           {/* Expert Plan */}
-          <Card className="flex flex-col">
+          <Card className="flex flex-col bg-card/80 backdrop-blur-xl">
             <CardHeader>
               <CardTitle className="text-2xl">Expert</CardTitle>
               <CardDescription>

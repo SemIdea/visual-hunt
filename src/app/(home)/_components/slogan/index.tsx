@@ -2,7 +2,7 @@ import Upload from "../upload";
 
 const Slogan = () => {
   return (
-    <section className="container mx-auto px-4 py-20 md:py-32">
+    <section className="container mx-auto px-4 py-20 md:py-32 relative z-2">
       <div className="mx-auto max-w-4xl text-center">
         <h1 className="mb-6 text-balance text-5xl font-bold leading-tight tracking-tight md:text-7xl">
           Find the Source of Any Image or Video.
