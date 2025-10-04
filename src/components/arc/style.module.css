@@ -1,0 +1,58 @@
+.container {
+  position: absolute;
+  top: 590px;
+  left: 50%;
+  width: 4043px;
+  height: 2865px;
+  transform: translate(-50%) rotate(180deg);
+}
+
+.elipse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-color);
+  border-radius: 50%;
+  transform: rotate(180deg);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.elipse1 {
+  z-index: 5;
+  margin-top: -16px;
+  border: 28px solid white;
+}
+
+.elipse2 {
+  z-index: 4;
+  margin-top: -12px;
+  border: 23px solid color-mix(in srgb, white 70%, var(--primary) 30%);
+}
+
+.elipse3 {
+  z-index: 3;
+  margin-top: -8px;
+  border: 23px solid color-mix(in srgb, white 50%, var(--primary) 50%);
+}
+
+.elipse4 {
+  z-index: 2;
+  margin-top: -2px;
+  border: 23px solid color-mix(in srgb, white 30%, var(--primary) 70%);
+}
+
+.elipse5 {
+  z-index: 1;
+  margin-top: 4px;
+  border: 20px solid color-mix(in srgb, white 10%, var(--primary) 90%);
+  box-shadow: 0 -15px 24.8px var(--primary), 0 -37px 99.2px var(--primary);
+}
+
+.elipse6 {
+  z-index: 1;
+  box-shadow: 0 -350px 800px color-mix(in srgb, var(--primary) 30%, transparent
+          70%),
+    0 -37px 99.2px color-mix(in srgb, var(--primary) 30%, transparent 70%),
+    0 -15px 24.8px color-mix(in srgb, var(--primary) 60%, transparent 40%);
+}

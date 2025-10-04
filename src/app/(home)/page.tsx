@@ -4,10 +4,12 @@ import SocialProof from "./_components/social";
 import HowItWorks from "./_components/howItWorks";
 import FAQ from "./_components/FAQ";
 import CTA from "./_components/CTA";
+import Arc from "@/components/arc";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
+      <Arc />
       <Slogan />
       <SocialProof />
       <HowItWorks />
