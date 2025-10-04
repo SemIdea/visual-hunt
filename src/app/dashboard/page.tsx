@@ -72,7 +72,7 @@ const getStatusVariant = (status: string) => {
 };
 
 const Page = async () => {
-  const caller = await createCaller();
+  // const caller = await createCaller();
   // const searches = caller.search;
 
   return (
@@ -162,6 +162,7 @@ const Page = async () => {
                       <TableRow key={search.id}>
                         <TableCell>
                           <div className="relative h-16 w-16 overflow-hidden rounded-md border border-border">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={search.preview || "/placeholder.svg"}
                               alt="Search preview"

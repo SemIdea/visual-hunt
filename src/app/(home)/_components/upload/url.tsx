@@ -3,8 +3,7 @@
 import { trpc } from "@/app/_trpc/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Spinner } from "@/components/ui/spinner";
+import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
@@ -37,35 +36,15 @@ const useUploadImage = () => {
 };
 
 const UrlTab = () => {
-  const { imageUrl, isLoading, setImageUrl, handleSubmit } = useUploadImage();
+  // const { imageUrl, isLoading, setImageUrl, handleSubmit } = useUploadImage();
 
   return (
-    <div className="grid w-full gap-1.5">
-      <div className="grid w-full items-center gap-3">
-        <Label htmlFor="url">Image URL</Label>
-        <div className="flex gap-3">
-          <Input
-            id="url"
-            placeholder="https://example.com/image.jpg"
-            onChange={(e) => setImageUrl(e.target.value)}
-          />
-          <Button
-            className="cursor-pointer dark:text-white"
-            onClick={handleSubmit}
-            disabled={!imageUrl || isLoading}
-          >
-            {isLoading ? <Spinner /> : null}
-            {isLoading ? "Searching..." : "Search"}
-          </Button>
-        </div>
-      </div>
-
-      <p className="text-xs text-muted-foreground">
-        Enter the URL of an image to search
-      </p>
-
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      {imageUrl && <img src={imageUrl} alt="Preview" />}
+    <div className="flex gap-2">
+      <Input placeholder="Paste image or video URL..." className="flex-1" />
+      <Button className="gap-2">
+        <Search className="h-4 w-4" />
+        Search
+      </Button>
     </div>
   );
 };

@@ -1,49 +1,68 @@
 "use client";
 
-import Link from "next/link";
 import { Search } from "lucide-react";
-import { ModeToggle } from "../ui/modetoggle";
 import { signOut, useSession } from "next-auth/react";
 import { Button } from "../ui/button";
+import { ModeToggle } from "../ui/modetoggle";
+import Link from "next/link";
 
 const Header = () => {
   const session = useSession();
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 border-b border-b-zinc-800 backdrop-blur-md bg-background/90 z-50 flex justify-center">
-      <div className="container max-w-5xl h-full flex items-center justify-between">
-        <Link href="/" className="flex items-center space-x-2">
-          <Search className="h-6 w-6 text-primary" />
-          <span className="font-bold text-xl hidden sm:inline-block">
-            VisualHunt
-          </span>
-        </Link>
-
-        <nav className="flex items-center space-x-2">
-          <div>
-            {session?.data ? (
-              <>
-                <span className="text-sm">
-                  Hello, {session.data.user?.name}
-                </span>
-                <Button
-                  variant="outline"
-                  className="ml-4 cursor-pointer"
-                  onClick={() => signOut()}
-                >
-                  Logout
-                </Button>
-              </>
-            ) : (
-              <Button className="dark:text-white cursor-pointer">
-                <Link href="/auth/login">Login</Link>
-              </Button>
-            )}
+    <nav className="border-b border-border/40">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-8">
+            <Link className="flex items-center gap-2" href={"/"}>
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+                <Search className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <span className="text-xl font-bold">VisualHunt</span>
+            </Link>
+            <div className="hidden items-center gap-6 md:flex">
+              <Link
+                href="/pricing"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Pricing
+              </Link>
+              <a
+                href="#faq"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                FAQ
+              </a>
+            </div>
           </div>
-          <ModeToggle />
-        </nav>
+          <div className="flex items-center gap-3">
+            <nav className="flex items-center space-x-2">
+              <div>
+                {session?.data ? (
+                  <>
+                    <span className="text-sm">
+                      Hello, {session.data.user?.name}
+                    </span>
+                    <Button
+                      variant="outline"
+                      className="ml-4 cursor-pointer"
+                      onClick={() => signOut()}
+                    >
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <Button className="dark:text-white cursor-pointer">
+                    <Link href="/auth/login">Login</Link>
+                  </Button>
+                )}
+              </div>
+              <ModeToggle />
+            </nav>
+          </div>
+        </div>
       </div>
-    </header>
+    </nav>
   );
 };
 export default Header;

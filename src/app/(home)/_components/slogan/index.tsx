@@ -1,13 +1,19 @@
+import Upload from "../upload";
+
 const Slogan = () => {
   return (
-    <section className="my-16 text-center flex flex-col gap-6">
-      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary">
-        Visual Hunt
-      </h1>
-      <p className="text-lg md:text-xl max-w-2xl mx-auto text-gray-400">
-        Upload an image or video, select a specific region, and discover
-        visually similar content across the web.
-      </p>
+    <section className="container mx-auto px-4 py-20 md:py-32">
+      <div className="mx-auto max-w-4xl text-center">
+        <h1 className="mb-6 text-balance text-5xl font-bold leading-tight tracking-tight md:text-7xl">
+          Find the Source of Any Image or Video.
+        </h1>
+        <p className="mb-12 text-pretty text-lg text-muted-foreground md:text-xl">
+          Our advanced multi-engine search finds what Google can&apos;t, from
+          anime scenes to obscure memes and video clips. End the search—find the
+          &apos;sauce&apos;.
+        </p>
+        <Upload />
+      </div>
     </section>
   );
 };
