@@ -1,10 +1,25 @@
 "use client";
 
-import { Search } from "lucide-react";
+import {
+  CreditCard,
+  LayoutDashboard,
+  LogOut,
+  Search,
+  User,
+} from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { Button } from "../ui/button";
 import { ModeToggle } from "../ui/modetoggle";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 const Header = () => {
   const session = useSession();
@@ -37,27 +52,59 @@ const Header = () => {
           </div>
           <div className="flex items-center gap-3">
             <nav className="flex items-center space-x-2">
-              <div>
-                {session?.data ? (
-                  <>
-                    <span className="text-sm">
-                      Hello, {session.data.user?.name}
-                    </span>
-                    <Button
-                      variant="outline"
-                      className="ml-4 cursor-pointer"
-                      onClick={() => signOut()}
-                    >
-                      Logout
-                    </Button>
-                  </>
-                ) : (
-                  <Button className="dark:text-white cursor-pointer">
-                    <Link href="/auth/login">Login</Link>
-                  </Button>
-                )}
-              </div>
-              <ModeToggle />
+              {session?.data ? (
+                <>
+                  <DropdownMenu modal={false}>
+                    <DropdownMenuTrigger>
+                      <Avatar>
+                        <AvatarImage
+                          src={session.data.user?.image!}
+                          alt={session.data.user?.name || "User Avatar"}
+                        />
+                        <AvatarFallback>
+                          {session.data.user?.name
+                            ? session.data.user.name.charAt(0)
+                            : "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuLabel>
+                        {session.data.user?.name}
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>
+                        <Link href="/dashboard" className="flex items-center gap-2">
+                          <LayoutDashboard />
+                          Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <User />
+                        Profile
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <CreditCard />
+                        Billing
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="p-0">
+                        <ModeToggle />
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        variant="destructive"
+                        onClick={() => signOut()}
+                      >
+                        <LogOut />
+                        Log out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
+              ) : (
+                <Button className="dark:text-white cursor-pointer">
+                  <Link href="/auth/login">Login</Link>
+                </Button>
+              )}
             </nav>
           </div>
         </div>
