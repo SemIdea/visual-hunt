@@ -38,27 +38,25 @@ export const googleLensSearch = task({
         thumbnail: result.thumbnail,
         position: index + 1,
       })
-    );                  
+    );
 
-    // await prisma.result.createMany({
-    //   data: resultsToCreate,
-    //   skipDuplicates: true,
-    // });
+    await prisma.result.createMany({
+      data: resultsToCreate,
+      skipDuplicates: true,
+    });
 
-    // await prisma.search.update({
-    //   where: {
-    //     id: payload.searchId,
-    //   },
-    //   data: {
-    //     status: "COMPLETED",
-    //   },
-    // });
+    await prisma.search.update({
+      where: {
+        id: payload.searchId,
+      },
+      data: {
+        status: "COMPLETED",
+      },
+    });
 
-    return resultsToCreate;
-
-    // return {
-    //   success: true,
-    //   searchId: payload.searchId,
-    // };
+    return {
+      success: true,
+      searchId: payload.searchId,
+    };
   },
 });
