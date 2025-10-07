@@ -1,4 +1,5 @@
 import { protectedProcedure, publicProcedure, t } from "../createRouter";
+import { deleteSearchController } from "../features/search/delete/controller";
 import { readSearchController } from "../features/search/read/controller";
 import { readSearchHistoryController } from "../features/search/readSearchHistory/controller";
 import { readSearchWithResultsController } from "../features/search/readWithResults/controller";
@@ -22,6 +23,9 @@ const SearchRouter = t.router({
   readSearchHistory: protectedProcedure.query(async ({ ctx }) =>
     readSearchHistoryController({ ctx })
   ),
+  deleteSearch: protectedProcedure
+    .input(readSearch)
+    .mutation(async ({ input, ctx }) => deleteSearchController({ input, ctx })),
 });
 
 export { SearchRouter };

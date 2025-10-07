@@ -21,60 +21,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import { redirect } from "next/navigation";
 import { createCaller } from "@/server/caller";
-import Link from "next/link";
-import { Trash } from "lucide-react";
-
-// Mock data for search history
-const searchHistory = [
-  {
-    id: 1,
-    preview: "/majestic-mountain-vista.png",
-    type: "Image",
-    status: "Completed",
-    date: "2024-01-15",
-  },
-  {
-    id: 2,
-    preview: "/ocean-sunset.png",
-    type: "Image",
-    status: "Completed",
-    date: "2024-01-14",
-  },
-  {
-    id: 3,
-    preview: "/autumn-forest-path.png",
-    type: "Image",
-    status: "Pending",
-    date: "2024-01-14",
-  },
-  {
-    id: 4,
-    preview: "/city-skyline-night.png",
-    type: "Image",
-    status: "Failed",
-    date: "2024-01-13",
-  },
-  {
-    id: 5,
-    preview: "/desert-dunes-golden-hour.jpg",
-    type: "Image",
-    status: "Completed",
-    date: "2024-01-12",
-  },
-];
-
-const getStatusVariant = (status: string) => {
-  switch (status) {
-    case "COMPLETED":
-      return "default";
-    case "PENDING":
-      return "secondary";
-    case "FAILED":
-      return "destructive";
-    default:
-      return "outline";
-  }
-};
+import { SearchHistory } from "./page.client";
 
 const Page = async () => {
   const session = await getServerSession(authOptions);
@@ -166,55 +113,7 @@ const Page = async () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {searches.map((search) => (
-                      <TableRow key={search.id}>
-                        <TableCell>
-                          <div className="relative h-16 w-16 overflow-hidden rounded-md border border-border">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={search.source || "/placeholder.svg"}
-                              alt="Search preview"
-                              className="object-cover"
-                            />
-                          </div>
-                        </TableCell>
-                        <TableCell className="font-medium">Image</TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={getStatusVariant(search.status)}
-                            className="dark:text-white"
-                          >
-                            {search.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {new Date(search.createdAt).toLocaleDateString(
-                            "en-US",
-                            {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            }
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end items-center gap-3">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              disabled={search.status !== "COMPLETED"}
-                            >
-                              <Link href={`/search/${search.id}`}>
-                                View Results
-                              </Link>
-                            </Button>
-                            <Button variant="destructive" size="sm" className="cursor-pointer">
-                              <Trash />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    <SearchHistory searches={searches} />
                   </TableBody>
                 </Table>
               </CardContent>
