@@ -84,13 +84,11 @@ model Result {
   searchId String
   search   Search @relation(fields: [searchId], references: [id], onDelete: Cascade)
 
-  position  Int
   title     String
-  source    String
   link      String
+  source    String
   thumbnail String
-  width     Int
-  height    Int
-
+  position  Int
+  
   @@index([searchId])
 }

@@ -9,7 +9,7 @@ const SearchWithUrlTriggerJob = async ({
 }: ISearchWithUrlDTO) => {
   const searchId = helpers.uid.generate();
 
-  const job = await tasks.trigger("search-with-google-lens", {
+  const job = await tasks.trigger("serp-google-lens", {
     searchId,
     imageUrl: data.url,
     type: "exact_matches",

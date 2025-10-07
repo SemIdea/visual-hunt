@@ -2,21 +2,13 @@ import { helpers } from "@/server/container/helpers";
 import { PrismaClient } from "@prisma/client/edge";
 import { task } from "@trigger.dev/sdk/v3";
 import { getJson } from "serpapi";
-
-type ISerpApiResult = {
-  position: number;
-  title: string;
-  source: string;
-  link: string;
-  thumbnail: string;
-  actual_image_width: number;
-  actual_image_height: number;
-};
+import { IResult } from "./types";
+import { IResultEntity } from "@/server/entities/result/DTO";
 
 const prisma = new PrismaClient();
 
 export const googleLensSearch = task({
-  id: "search-with-google-lens",
+  id: "serp-google-lens",
   maxDuration: 300,
   run: async (payload: {
     imageUrl: string;
@@ -31,37 +23,37 @@ export const googleLensSearch = task({
       api_key: process.env.SERP_API_KEY!,
     });
 
-    const resultsToCreate = response.exact_matches.map(
-      (result: ISerpApiResult) => ({
+    const resultsToCreate: IResultEntity[] = response.exact_matches.map(
+      (result: IResult) => ({
         id: helpers.uid.generate(),
         searchId: payload.searchId,
-        position: result.position,
         title: result.title,
         source: result.source,
         link: result.link,
         thumbnail: result.thumbnail,
-        width: result.actual_image_width,
-        height: result.actual_image_height,
+        position: result.position,
       })
     );
 
-    await prisma.result.createMany({
-      data: resultsToCreate,
-      skipDuplicates: true,
-    });
+    // await prisma.result.createMany({
+    //   data: resultsToCreate,
+    //   skipDuplicates: true,
+    // });
 
-    await prisma.search.update({
-      where: {
-        id: payload.searchId,
-      },
-      data: {
-        status: "COMPLETED",
-      },
-    });
+    // await prisma.search.update({
+    //   where: {
+    //     id: payload.searchId,
+    //   },
+    //   data: {
+    //     status: "COMPLETED",
+    //   },
+    // });
 
-    return {
-      success: true,
-      searchId: payload.searchId,
-    };
+    return resultsToCreate;
+
+    // return {
+    //   success: true,
+    //   searchId: payload.searchId,
+    // };
   },
 });
