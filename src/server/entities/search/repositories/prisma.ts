@@ -29,6 +29,13 @@ class PrismaSearchModel implements ISearchModel {
     });
   }
 
+  async readSearchHistory(userId: string) {
+    return await prisma.search.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
   async update(
     id: string,
     data: Partial<Omit<ISearchEntity, "id" | "createdAt" | "updatedAt">>

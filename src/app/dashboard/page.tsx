@@ -17,6 +17,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/authOptions";
+import { redirect } from "next/navigation";
+import { createCaller } from "@/server/caller";
+import Link from "next/link";
+import { Trash } from "lucide-react";
 
 // Mock data for search history
 const searchHistory = [
@@ -59,11 +65,11 @@ const searchHistory = [
 
 const getStatusVariant = (status: string) => {
   switch (status) {
-    case "Completed":
+    case "COMPLETED":
       return "default";
-    case "Pending":
+    case "PENDING":
       return "secondary";
-    case "Failed":
+    case "FAILED":
       return "destructive";
     default:
       return "outline";
@@ -71,29 +77,32 @@ const getStatusVariant = (status: string) => {
 };
 
 const Page = async () => {
-  // const caller = await createCaller();
-  // const searches = caller.search;
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+
+  if (!user || !user.email || !user.name || !user.image) {
+    redirect("/auth/login");
+  }
+
+  const caller = await createCaller();
+  const searches = await caller.search.readSearchHistory();
 
   return (
     <div className="min-h-screen bg-background p-6 md:p-8 lg:p-12">
       <div className="mx-auto max-w-6xl space-y-8">
         {/* Header Section */}
         <div className="space-y-6">
-          <h1 className="text-4xl font-bold tracking-tight">Welcome back!</h1>
-
           {/* User Info */}
           <div className="flex items-center gap-4">
             <Avatar className="h-16 w-16">
-              <AvatarImage src="/diverse-user-avatars.png" alt="User avatar" />
+              <AvatarImage src={user.image} alt="User avatar" />
               <AvatarFallback className="bg-primary/10 text-lg font-semibold">
                 JD
               </AvatarFallback>
             </Avatar>
             <div className="space-y-1">
-              <p className="text-lg font-semibold">John Doe</p>
-              <p className="text-sm text-muted-foreground">
-                john.doe@example.com
-              </p>
+              <p className="text-lg font-semibold">{user.name}</p>
+              <p className="text-sm text-muted-foreground">{user.email}</p>
             </div>
           </div>
         </div>
@@ -157,21 +166,19 @@ const Page = async () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {searchHistory.map((search) => (
+                    {searches.map((search) => (
                       <TableRow key={search.id}>
                         <TableCell>
                           <div className="relative h-16 w-16 overflow-hidden rounded-md border border-border">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                              src={search.preview || "/placeholder.svg"}
+                              src={search.source || "/placeholder.svg"}
                               alt="Search preview"
                               className="object-cover"
                             />
                           </div>
                         </TableCell>
-                        <TableCell className="font-medium">
-                          {search.type}
-                        </TableCell>
+                        <TableCell className="font-medium">Image</TableCell>
                         <TableCell>
                           <Badge
                             variant={getStatusVariant(search.status)}
@@ -181,20 +188,30 @@ const Page = async () => {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-muted-foreground">
-                          {new Date(search.date).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })}
+                          {new Date(search.createdAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            }
+                          )}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            disabled={search.status !== "Completed"}
-                          >
-                            View Results
-                          </Button>
+                          <div className="flex justify-end items-center gap-3">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={search.status !== "COMPLETED"}
+                            >
+                              <Link href={`/search/${search.id}`}>
+                                View Results
+                              </Link>
+                            </Button>
+                            <Button variant="destructive" size="sm" className="cursor-pointer">
+                              <Trash />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}

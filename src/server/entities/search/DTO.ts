@@ -12,6 +12,7 @@ type ISearchExtraRepositories = {
   readWithResults: (
     searchId: string
   ) => Promise<ISearchEntityWithResults | null>;
+  readSearchHistory: (userId: string) => Promise<ISearchEntity[]>;
 };
 
 type ISearchModel = IEntityDatabaseRepository<
@@ -26,9 +27,17 @@ type IReadSearchWithResults = {
   };
 };
 
+type IReadSearchHistoryDTO = {
+  userId: string;
+  repositories: {
+    database: ISearchModel;
+  };
+};
+
 export type {
   ISearchEntity,
   ISearchModel,
   IReadSearchWithResults,
   ISearchEntityWithResults,
+  IReadSearchHistoryDTO,
 };

@@ -1,5 +1,6 @@
 import { protectedProcedure, publicProcedure, t } from "../createRouter";
 import { readSearchController } from "../features/search/read/controller";
+import { readSearchHistoryController } from "../features/search/readSearchHistory/controller";
 import { readSearchWithResultsController } from "../features/search/readWithResults/controller";
 import { searchWithUrlController } from "../features/search/url/controller";
 import { readSearch, searchWithUrlSchema } from "../schema/search.schema";
@@ -18,6 +19,9 @@ const SearchRouter = t.router({
     .query(async ({ input, ctx }) =>
       readSearchWithResultsController({ input, ctx })
     ),
+  readSearchHistory: protectedProcedure.query(async ({ ctx }) =>
+    readSearchHistoryController({ ctx })
+  ),
 });
 
 export { SearchRouter };
