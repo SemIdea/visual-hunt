@@ -19,11 +19,7 @@ const LoginForm = ({
                 variant="outline"
                 type="button"
                 className="cursor-pointer"
-                onClick={() =>
-                  signIn(provider.id, {
-                    callbackUrl: "/search/b4792ba9-89bd-4cf5-a036-d8277069d676",
-                  })
-                }
+                onClick={() => signIn(provider.id)}
               >
                 Login with {provider.name}
               </Button>
