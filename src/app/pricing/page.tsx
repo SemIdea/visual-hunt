@@ -21,7 +21,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import Arc from "@/components/arc";
 
 export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false);

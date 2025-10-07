@@ -58,7 +58,7 @@ const Header = () => {
                     <DropdownMenuTrigger>
                       <Avatar>
                         <AvatarImage
-                          src={session.data.user?.image!}
+                          src={session.data.user?.image || undefined}
                           alt={session.data.user?.name || "User Avatar"}
                         />
                         <AvatarFallback>
