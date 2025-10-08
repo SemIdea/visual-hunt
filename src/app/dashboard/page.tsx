@@ -67,7 +67,12 @@ const Page = async () => {
               <div className="flex items-center gap-3">
                 <span className="text-sm font-medium">Current Plan:</span>
                 <Badge variant="default" className="text-sm dark:text-white">
-                  Pro Tier
+                  {user.subscription?.priceId ===
+                  "price_1SG4iaDxv6vHSwDTyc604Tl2"
+                    ? "Basic"
+                    : user.subscription?.priceId === "price_1N6xZ2Lh4qEXAMPLE"
+                    ? "Pro"
+                    : "Free"}
                 </Badge>
               </div>
               <Button className="dark:text-white">Manage Subscription</Button>

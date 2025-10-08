@@ -24,6 +24,8 @@ import {
 const Header = () => {
   const session = useSession();
 
+  console.log("Session data:", session);
+
   return (
     <nav className="border-b border-border/40">
       <div className="container mx-auto px-4 py-4">

@@ -21,8 +21,26 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { trpc } from "../_trpc/client";
+import { useRouter } from "next/navigation";
+
+export const plans = {
+  basic: {
+    link:
+      process.env.NODE_ENV === "development"
+        ? "https://buy.stripe.com/test_8x29AT7xs65N15e9vM4Rq00"
+        : "",
+    price: 19,
+    duration: "/month",
+  },
+};
 
 export default function PricingPage() {
+  const { data: session } = useSession();
+  const router = useRouter();
+
   const [isYearly, setIsYearly] = useState(false);
   const [credits, setCredits] = useState([100]);
 
@@ -34,6 +52,14 @@ export default function PricingPage() {
   };
 
   const creditPrice = (credits[0] / 10).toFixed(0);
+
+  const { mutate: createCheckoutSession } = trpc.checkout.create.useMutation({
+    onSuccess(data) {
+      if (data.url) {
+        router.push(data.url);
+      }
+    },
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -61,6 +87,7 @@ export default function PricingPage() {
               id="billing-toggle"
               checked={isYearly}
               onCheckedChange={setIsYearly}
+              disabled
             />
             <Label
               htmlFor="billing-toggle"
@@ -76,12 +103,10 @@ export default function PricingPage() {
           {/* Free Plan */}
           <Card className="flex flex-col bg-card/80 backdrop-blur-xl">
             <CardHeader>
-              <CardTitle className="text-2xl">Free</CardTitle>
-              <CardDescription>
-                For casual users and trying out the basics.
-              </CardDescription>
+              <CardTitle className="text-2xl">Basic plan</CardTitle>
+              <CardDescription>For casual users</CardDescription>
               <div className="mt-4">
-                <span className="text-4xl font-bold">$0</span>
+                <span className="text-4xl font-bold">$9.99</span>
                 <span className="text-muted-foreground"> / month</span>
               </div>
             </CardHeader>
@@ -95,6 +120,10 @@ export default function PricingPage() {
                   <Check className="size-5 text-primary shrink-0 mt-0.5" />
                   <span>Standard Search Speed</span>
                 </li>
+                <li className="flex items-start gap-2">
+                  <Check className="size-5 text-primary shrink-0 mt-0.5" />
+                  <span>Save Search History</span>
+                </li>
                 <li className="flex items-start gap-2 text-muted-foreground">
                   <X className="size-5 shrink-0 mt-0.5" />
                   <span>Video Search</span>
@@ -103,14 +132,22 @@ export default function PricingPage() {
                   <X className="size-5 shrink-0 mt-0.5" />
                   <span>Multi-Engine Analysis</span>
                 </li>
-                <li className="flex items-start gap-2 text-muted-foreground">
-                  <X className="size-5 shrink-0 mt-0.5" />
-                  <span>Save Search History</span>
-                </li>
               </ul>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" className="w-full bg-transparent">
+              <Button
+                variant="outline"
+                className="w-full bg-transparent"
+                onClick={() => {
+                  if (session) {
+                    createCheckoutSession({
+                      priceId: "price_1SG4iaDxv6vHSwDTyc604Tl2",
+                    });
+                  } else {
+                    router.push("/signin");
+                  }
+                }}
+              >
                 Get Started
               </Button>
             </CardFooter>

@@ -22,6 +22,46 @@ const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/auth/login",
   },
+  session: {
+    strategy: "jwt",
+  },
+  callbacks: {
+    // 1. JWT callback is called whenever a JWT is created or updated.
+    async jwt({ token, user }) {
+      // On initial sign in, `user` object is available.
+      if (user) {
+        token.id = user.id;
+        // Fetch the subscription from your database.
+        const subscription = await prisma.subscription.findUnique({
+          where: { userId: user.id },
+          select: {
+            status: true,
+            currentPeriodEnd: true,
+            stripePriceId: true,
+          },
+        });
+
+        // Add the subscription status to the token.
+        if (subscription) {
+          token.subscription = {
+            status: subscription.status,
+            currentPeriodEnd: subscription.currentPeriodEnd,
+            priceId: subscription.stripePriceId,
+          };
+        }
+      }
+      return token;
+    },
+
+    // 2. Session callback is called whenever a session is checked.
+    async session({ session, token }) {
+      // Pass the subscription data from the token to the session object.
+      if (token.subscription && session.user) {
+        session.user.subscription = token.subscription;
+      }
+      return session;
+    },
+  },
 };
 
 export { authOptions };
