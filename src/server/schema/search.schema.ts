@@ -12,8 +12,13 @@ const searchWithUrlSchema = z.object({
     .nonempty("URL is required"),
 });
 
-type ReadSearch = z.TypeOf<typeof readSearch>;
-type SearchWithUrlInput = z.TypeOf<typeof searchWithUrlSchema>;
+const deleteSearch = z.object({
+  id: z.uuidv4(),
+});
 
-export { searchWithUrlSchema, readSearch };
-export type { SearchWithUrlInput, ReadSearch };
+type ReadSearchInput = z.TypeOf<typeof readSearch>;
+type SearchWithUrlInput = z.TypeOf<typeof searchWithUrlSchema>;
+type DeleteSearchInput = z.TypeOf<typeof deleteSearch>;
+
+export { searchWithUrlSchema, readSearch, deleteSearch };
+export type { SearchWithUrlInput, ReadSearchInput, DeleteSearchInput };

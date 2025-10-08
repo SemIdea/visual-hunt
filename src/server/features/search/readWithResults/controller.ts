@@ -1,12 +1,12 @@
 import { IAPIContextDTO } from "@/server/createContex";
-import { ReadSearch } from "@/server/schema/search.schema";
+import { ReadSearchInput } from "@/server/schema/search.schema";
 import { ReadSearchWithResultsService } from "./service";
 
 const readSearchWithResultsController = async ({
   input,
   ctx,
 }: {
-  input: ReadSearch;
+  input: ReadSearchInput;
   ctx: IAPIContextDTO;
 }) => {
   const search = await ReadSearchWithResultsService({
