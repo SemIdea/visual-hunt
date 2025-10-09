@@ -1,18 +1,37 @@
 "use client";
 
-import { Upload } from "lucide-react";
-import { ChangeEvent, DragEvent, useRef, useState } from "react";
-import { uploadFile } from "./uploadFile";
 import { trpc } from "@/app/_trpc/client";
 import { useRouter } from "next/navigation";
+import { ChangeEvent, DragEvent, useCallback, useRef, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { Search, Upload } from "lucide-react";
 
-const UploadTab = () => {
+export const uploadFile = async (file: File | string): Promise<string> => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "default_visual");
+
+  const response = await fetch(
+    "https://api.cloudinary.com/v1_1/dmu6nlwyt/upload",
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+  const data = await response.json();
+  if (response.ok) {
+    return data.secure_url;
+  } else {
+    throw new Error(data.error.message);
+  }
+};
+
+const useUploadImage = () => {
   const router = useRouter();
-
-  const [dragActive, setDragActive] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { mutate: search } = trpc.search.searchWithUrl.useMutation({
     onSuccess: (data) => {
@@ -20,6 +39,48 @@ const UploadTab = () => {
       router.push(`/search/${data.id}`);
     },
   });
+
+  const handleSubmit = useCallback(async () => {
+    if (!imageUrl) return;
+    setIsLoading(true);
+    const safeUrl = await uploadFile(imageUrl);
+    search({
+      url: safeUrl,
+    });
+  }, [imageUrl, search]);
+
+  return {
+    imageUrl,
+    isLoading,
+    setIsLoading,
+    setImageUrl,
+    handleSubmit,
+  };
+};
+
+const UrlTab = () => {
+  const { imageUrl, isLoading, setImageUrl, handleSubmit } = useUploadImage();
+
+  return (
+    <div className="flex gap-2">
+      <Input
+        placeholder="Paste image or video URL..."
+        className="flex-1"
+        value={imageUrl}
+        onChange={(e) => setImageUrl(e.target.value)}
+      />
+      <Button className="gap-2" onClick={handleSubmit} disabled={isLoading}>
+        {isLoading ? <Spinner /> : <Search />}
+        Search
+      </Button>
+    </div>
+  );
+};
+
+const UploadTab = () => {
+  const { isLoading, setImageUrl, handleSubmit } = useUploadImage();
+  const [dragActive, setDragActive] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrag = (e: DragEvent) => {
     e.preventDefault();
@@ -32,19 +93,18 @@ const UploadTab = () => {
   };
 
   const uploadAndSearchFile = async (file: File | string) => {
-    setIsLoading(true);
     const safeUrl = await uploadFile(file);
-    search({
-      url: safeUrl,
-    });
+    setImageUrl(safeUrl);
+    handleSubmit();
   };
 
   const handleDrop = async (e: DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      uploadAndSearchFile(e.dataTransfer.files[0]);
+    const files = e.dataTransfer?.files;
+    if (files && files[0]) {
+      uploadAndSearchFile(files[0]);
     }
   };
 
@@ -86,4 +146,4 @@ const UploadTab = () => {
   );
 };
 
-export default UploadTab;
+export { UrlTab, UploadTab };

@@ -1,6 +1,5 @@
-import UrlTab from "./url";
 import { Card } from "@/components/ui/card";
-import UploadTab from "./upload";
+import { UploadTab, UrlTab } from "./index.client";
 
 const UploadSectionCopy = () => {
   return (
