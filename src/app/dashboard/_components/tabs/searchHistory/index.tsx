@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { SearchHistory } from "./page.client";
+import { SearchHistory } from "./index.client";
 import { ISearchEntity } from "@/server/entities/search/DTO";
 
 const SearchHistoryTab = ({ searches }: { searches: ISearchEntity[] }) => {

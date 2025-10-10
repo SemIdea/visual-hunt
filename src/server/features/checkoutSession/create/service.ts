@@ -20,30 +20,6 @@ const CreateCheckoutSessionService = async ({
     throw new Error("User not found");
   }
 
-  var stripeCustomerId = user.stripeCustomerId;
-
-  if (!stripeCustomerId) {
-    const customer = await stripe.customers.create({
-      email: user.email!,
-      name: user.name!,
-    });
-
-    console.log("Created new Stripe customer:", customer);
-
-    stripeCustomerId = customer.id;
-
-    await UserEntity.update({
-      id: user.id,
-      data: {
-        stripeCustomerId: customer.id,
-      },
-      repositories: {
-        ...repositories,
-        database: repositories.user,
-      },
-    });
-  }
-
   try {
     const checkoutSession = await stripe.checkout.sessions.create({
       line_items: [{ price: data.priceId, quantity: 1 }],
@@ -65,7 +41,7 @@ const CreateCheckoutSessionService = async ({
     console.error("Error creating Stripe checkout session:", error);
     throw new Error("Failed to create checkout session", {
       cause: error,
-    } as any);
+    });
   }
 };
 
