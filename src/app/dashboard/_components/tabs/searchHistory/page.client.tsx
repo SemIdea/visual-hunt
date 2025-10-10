@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { ISearchEntity } from "@/server/entities/search/DTO";
 import { Trash } from "lucide-react";
-import { trpc } from "../_trpc/client";
+import { trpc } from "../../../../_trpc/client";
 import { useState } from "react";
 
 const getStatusVariant = (status: string) => {
