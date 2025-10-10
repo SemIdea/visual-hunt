@@ -30,7 +30,9 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${roboto.variable} antialiased`}>
+      <body
+        className={`${roboto.variable} antialiased min-h-screen flex flex-col`}
+      >
         <Providers
           session={session}
           attribute="class"
@@ -38,7 +40,9 @@ export default async function RootLayout({
           enableSystem
         >
           <Header />
-          <main className="relative top-24">{children}</main>
+          {/* Spacer to account for fixed header height (h-24 ~= 6rem) */}
+          <div className="h-24" aria-hidden="true" />
+          <main className="relative flex-1">{children}</main>
           <Footer />
         </Providers>
       </body>
