@@ -25,7 +25,7 @@ const Header = () => {
   const session = useSession();
 
   return (
-    <div className="w-full fixed z-10 bg-black/40 backdrop-blur-sm">
+    <div className="w-full fixed z-10 bg-background/40 backdrop-blur-sm">
       <nav className="border-b border-border/40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">

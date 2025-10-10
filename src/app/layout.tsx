@@ -38,7 +38,7 @@ export default async function RootLayout({
           enableSystem
         >
           <Header />
-          {children}
+          <main className="relative top-24">{children}</main>
           <Footer />
         </Providers>
       </body>

@@ -7,6 +7,10 @@
   transform: translate(-50%) rotate(180deg);
 }
 
+.clipBottomHalf {
+  clip-path: inset(0 0 50% 0);
+}
+
 .elipse {
   position: absolute;
   width: 100%;

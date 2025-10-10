@@ -7,7 +7,7 @@ const Slogan = () => {
         <h1 className="mb-6 text-balance text-5xl font-bold leading-tight tracking-tight md:text-7xl">
           Find the Source of Any Image or Video.
         </h1>
-        <p className="mb-12 text-pretty text-lg text-muted-foreground md:text-xl">
+        <p className="mb-12 text-lg text-muted-foreground md:text-xl">
           Our advanced multi-engine search finds what Google can&apos;t, from
           anime scenes to obscure memes and video clips. End the search—find the
           &apos;sauce&apos;.

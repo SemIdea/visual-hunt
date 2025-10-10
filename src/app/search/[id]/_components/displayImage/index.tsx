@@ -18,7 +18,7 @@ const DisplayImage = ({
     .toUpperCase();
 
   return (
-    <div className="lg:sticky lg:top-24 lg:self-start">
+    <div className="lg:sticky">
       <div className="flex items-center gap-3 mb-6">
         <Avatar className="h-10 w-10">
           <AvatarImage src={user.image!} alt="User" />

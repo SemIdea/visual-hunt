@@ -4,7 +4,7 @@ import RunStatus from "./index.client";
 
 const Results = ({ search }: { search: ISearchEntityWithResults }) => {
   return (
-    <div className="relative top-16">
+    <div>
       <h1 className="text-3xl font-bold text-foreground mb-6">
         Search Results
       </h1>

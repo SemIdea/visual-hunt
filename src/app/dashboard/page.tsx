@@ -18,7 +18,7 @@ const Page = async () => {
   const searches = await caller.search.readSearchHistory();
 
   return (
-    <div className="min-h-screen bg-background p-6 md:p-8 lg:p-12">
+    <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-6xl space-y-8">
         <UserInfo user={user} />
         <PlanUsage user={user} />
