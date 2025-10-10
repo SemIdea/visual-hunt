@@ -5,7 +5,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getProviders } from "next-auth/react";
-import LoginForm from "./_components/loginForm";
+import LoginForm from "./_components/form";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { redirect } from "next/navigation";
@@ -26,9 +26,6 @@ const Page = async () => {
           <Card>
             <CardHeader>
               <CardTitle>Login to your account</CardTitle>
-              {/* <CardDescription>
-                Enter your email below to login to your account
-              </CardDescription> */}
             </CardHeader>
             <CardContent>
               <LoginForm providers={providers} />
