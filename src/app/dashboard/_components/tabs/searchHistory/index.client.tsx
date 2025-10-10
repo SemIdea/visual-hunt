@@ -69,13 +69,15 @@ const SearchHistory = ({ searches }: { searches: ISearchEntity[] }) => {
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={search.status !== "COMPLETED"}
-          >
-            <Link href={`/search/${search.id}`}>View Results</Link>
-          </Button>
+          <Link href={`/search/${search.id}`}>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={search.status !== "COMPLETED"}
+            >
+              View Results
+            </Button>
+          </Link>
           <Button
             variant="destructive"
             size="sm"

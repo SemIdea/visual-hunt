@@ -105,9 +105,11 @@ const Header = () => {
                     </DropdownMenu>
                   </>
                 ) : (
-                  <Button className="dark:text-white cursor-pointer">
-                    <Link href="/auth/login">Login</Link>
-                  </Button>
+                  <Link href="/auth/login">
+                    <Button className="dark:text-white">
+                      Login
+                    </Button>
+                  </Link>
                 )}
               </nav>
             </div>
