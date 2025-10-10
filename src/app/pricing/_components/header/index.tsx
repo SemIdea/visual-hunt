@@ -10,8 +10,6 @@ const PricingHeader = () => {
         Start for free, or unlock powerful features with our Pro plan. Cancel
         anytime.
       </p>
-
-      {/* Billing Toggle */}
       <BillingToggle />
     </div>
   );
