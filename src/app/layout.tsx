@@ -3,11 +3,11 @@ import { Roboto } from "next/font/google";
 import Providers from "./providers";
 import Header from "@/components/header";
 import { getServerSession } from "next-auth";
-import "./globals.css";
-import "react-image-crop/dist/ReactCrop.css";
 import { authOptions } from "./api/auth/[...nextauth]/authOptions";
 import { ReactNode } from "react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Footer from "@/components/footer";
+import "./globals.css";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -40,10 +40,10 @@ export default async function RootLayout({
           enableSystem
         >
           <Header />
-          {/* Spacer to account for fixed header height (h-24 ~= 6rem) */}
           <div className="h-24" aria-hidden="true" />
           <main className="relative flex-1">{children}</main>
           <Footer />
+          <SpeedInsights />
         </Providers>
       </body>
     </html>

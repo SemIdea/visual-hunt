@@ -37,6 +37,7 @@
     "@trpc/next": "^11.1.2",
     "@trpc/react-query": "^11.1.2",
     "@trpc/server": "^11.6.0",
+    "@vercel/speed-insights": "^1.2.0",
     "add": "^2.0.6",
     "bcrypt": "^6.0.0",
     "class-variance-authority": "^0.7.1",
