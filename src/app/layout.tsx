@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/authOptions";
 import { ReactNode } from "react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 import Footer from "@/components/footer";
 import "./globals.css";
 
@@ -44,6 +45,7 @@ export default async function RootLayout({
           <main className="relative flex-1">{children}</main>
           <Footer />
           <SpeedInsights />
+          <Analytics />
         </Providers>
       </body>
     </html>
