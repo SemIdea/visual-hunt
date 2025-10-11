@@ -7,9 +7,34 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { plans } from "@/config/plans";
 import { User } from "next-auth";
+import Link from "next/link";
 
 const PlanUsage = ({ user }: { user: NonNullable<User> }) => {
+  // 1. Get the user's current priceId from their subscription
+  const currentPriceId = user.subscription?.priceId;
+
+  // Handle case where user has no active subscription
+  if (!currentPriceId) {
+    return <p>You are currently on the free plan.</p>;
+  }
+
+  // 2. Find the plan by checking both monthly and yearly IDs
+  const planEntry = Object.entries(plans).find(
+    ([_, planDetails]) =>
+      planDetails.cta.priceId.monthly === currentPriceId ||
+      planDetails.cta.priceId.yearly === currentPriceId
+  );
+
+  // Handle case where the plan is not found in your config (e.g., a legacy plan)
+  if (!planEntry) {
+    return <p>You are on a custom or legacy plan.</p>;
+  }
+
+  // 3. Extract the plan name and determine the interval
+  const plan = planEntry[1];
+
   return (
     <Card>
       <CardHeader>
@@ -21,14 +46,12 @@ const PlanUsage = ({ user }: { user: NonNullable<User> }) => {
           <div className="flex items-center gap-3">
             <span className="text-sm font-medium">Current Plan:</span>
             <Badge variant="default" className="text-sm dark:text-white">
-              {user.subscription?.priceId === "price_1SG4iaDxv6vHSwDTyc604Tl2"
-                ? "Basic"
-                : user.subscription?.priceId === "price_1N6xZ2Lh4qEXAMPLE"
-                ? "Pro"
-                : "Free"}
+              {`${plan.title}`}
             </Badge>
           </div>
-          <Button className="dark:text-white">Manage Subscription</Button>
+          <Link href="https://billing.stripe.com/p/login/test_8x29AT7xs65N15e9vM4Rq00">
+            <Button className="dark:text-white">Manage Subscription</Button>
+          </Link>
         </div>
 
         {/* Credit Balance */}

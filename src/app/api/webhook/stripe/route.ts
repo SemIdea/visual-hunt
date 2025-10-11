@@ -1,94 +1,27 @@
 import { prisma } from "@/server/drivers/prisma";
-import { NextResponse } from "next/server";
 import { SubscriptionStatus } from "@prisma/client";
+import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-/**
- * Maps a Stripe subscription status to the corresponding status in your Prisma schema.
- * This is a safer and more explicit way to handle status changes.
- * @param {Stripe.Subscription.Status} stripeStatus - The status from the Stripe subscription object.
- * @returns {SubscriptionStatus | null} - The matching Prisma enum status, or null if unhandled.
- */
-function mapStripeStatusToPrismaStatus(
-  stripeStatus: Stripe.Subscription.Status
-): SubscriptionStatus | null {
-  const statusMap: Record<Stripe.Subscription.Status, SubscriptionStatus> = {
-    active: "ACTIVE",
-    canceled: "CANCELED",
-    incomplete: "INCOMPLETE",
-    incomplete_expired: "INCOMPLETE_EXPIRED",
-    past_due: "PAST_DUE",
-    trialing: "TRIALING",
-    unpaid: "UNPAID",
-    paused: "PAUSED",
-  };
-  return statusMap[stripeStatus] || null;
-}
-
-/**
- * Retrieves a subscription from Stripe and upserts its details into your local database.
- * This function is the single source of truth for synchronizing Stripe subscription data.
- * @param {string} subscriptionId - The ID of the Stripe subscription.
- */
-async function manageSubscriptionStatusChange(subscriptionId: string) {
-  const subscription = (await stripe.subscriptions.retrieve(
-    subscriptionId
-  )) as Stripe.Subscription;
-
-  const user = await prisma.user.findFirst({
-    where: { stripeCustomerId: subscription.customer as string },
-    select: { id: true },
-  });
-
-  if (!user) {
-    console.error(
-      `Webhook Error: User not found for customer ID: ${subscription.customer}`
-    );
-    return;
+const parseStatus = (
+  status: Stripe.Subscription.Status
+): SubscriptionStatus => {
+  switch (status) {
+    case "active":
+    case "trialing":
+      return "ACTIVE";
+    case "canceled":
+    case "incomplete_expired":
+    case "unpaid":
+      return "CANCELED";
+    case "past_due":
+      return "PAST_DUE";
+    default:
+      return "CANCELED";
   }
-
-  const prismaStatus = mapStripeStatusToPrismaStatus(subscription.status);
-
-  if (!prismaStatus) {
-    console.error(
-      `Webhook Error: Unhandled Stripe subscription status: ${subscription.status}`
-    );
-    return;
-  }
-
-  // **THE FIX IS HERE**
-  // Access the period end from the first subscription item, as shown in your data.
-  // Also, add a safety check to ensure items exist.
-  const subscriptionItem = subscription.items.data[0];
-  if (!subscriptionItem) {
-    console.error(
-      `Webhook Error: Subscription ${subscription.id} has no items.`
-    );
-    return;
-  }
-  // This value is guaranteed to exist on a subscription item.
-  const currentPeriodEnd = new Date(subscriptionItem.current_period_end * 1000);
-
-  const subscriptionData = {
-    userId: user.id,
-    stripeSubscriptionId: subscription.id,
-    stripePriceId: subscriptionItem.price.id,
-    status: prismaStatus,
-    currentPeriodEnd: currentPeriodEnd,
-  };
-
-  await prisma.subscription.upsert({
-    where: { stripeSubscriptionId: subscription.id },
-    create: subscriptionData,
-    update: subscriptionData,
-  });
-
-  console.log(
-    `Successfully upserted subscription ${subscription.id} for user ${user.id}`
-  );
-}
+};
 
 export async function POST(request: Request) {
   const signature = request.headers.get("stripe-signature");
@@ -118,7 +51,6 @@ export async function POST(request: Request) {
     );
   }
 
-  // Handle relevant subscription events
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
@@ -128,10 +60,9 @@ export async function POST(request: Request) {
         console.error(
           "checkout.session.completed webhook missing metadata.userId; cannot attach subscription"
         );
-        break; // acknowledge webhook without throwing (prevents Stripe retries spam)
+        break;
       }
 
-      // Ensure the user exists (and optionally attach the stripeCustomerId if missing)
       const user = await prisma.user.findUnique({ where: { id: userId } });
       if (!user) {
         console.error(
@@ -140,7 +71,6 @@ export async function POST(request: Request) {
         break;
       }
 
-      // Retrieve subscription from Stripe (authoritative data)
       if (!session.subscription) {
         console.error(
           `checkout.session.completed: session has no subscription for user ${userId}`
@@ -170,30 +100,27 @@ export async function POST(request: Request) {
         });
       }
 
-      // Check if there's already a subscription row for this user (1:1 relation)
       const existingUserSubscription = await prisma.subscription.findUnique({
         where: { userId },
       });
 
       if (existingUserSubscription) {
-        // If the stripeSubscriptionId changed (e.g. user upgraded/downgraded), update that row
         if (existingUserSubscription.stripeSubscriptionId !== subscription.id) {
           await prisma.subscription.update({
             where: { userId },
             data: {
               stripeSubscriptionId: subscription.id,
               stripePriceId: firstItem.price.id,
-              status: "ACTIVE",
+              status: parseStatus(subscription.status),
               currentPeriodEnd: periodEnd,
             },
           });
         } else {
-          // Just refresh fields
           await prisma.subscription.update({
             where: { userId },
             data: {
               stripePriceId: firstItem.price.id,
-              status: "ACTIVE",
+              status: parseStatus(subscription.status),
               currentPeriodEnd: periodEnd,
             },
           });
@@ -205,7 +132,7 @@ export async function POST(request: Request) {
             userId,
             stripeSubscriptionId: subscription.id,
             stripePriceId: firstItem.price.id,
-            status: "ACTIVE",
+            status: parseStatus(subscription.status),
             currentPeriodEnd: periodEnd,
           },
         });
@@ -214,6 +141,26 @@ export async function POST(request: Request) {
       console.log(
         `checkout.session.completed processed for user ${userId} (subscription ${subscription.id})`
       );
+    }
+
+    case "customer.subscription.updated": {
+      const subscription = event.data.object as Stripe.Subscription;
+
+      await prisma.subscription.update({
+        where: {
+          stripeSubscriptionId: subscription.id,
+        },
+        data: {
+          status: parseStatus(subscription.status), // Cast to your SubscriptionStatus enum
+          stripePriceId: subscription.items.data[0].price.id,
+          currentPeriodEnd: new Date(
+            subscription.items.data[0].current_period_end * 1000
+          ),
+        },
+      });
+
+      console.log(`Updated subscription ${subscription.id}`);
+      break;
     }
   }
 
