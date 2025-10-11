@@ -11,7 +11,7 @@ const searchWithUrlController = async ({
 }) => {
   const job = await SearchWithUrlTriggerJob({
     ...input,
-    userId: ctx.userId,
+    userId: ctx.user.id,
     repositories: {
       ...ctx.repositories,
       database: ctx.repositories.search,

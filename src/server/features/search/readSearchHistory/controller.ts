@@ -6,7 +6,7 @@ const readSearchHistoryController = async ({
 }: {
   ctx: IProtectedAPIContextDTO;
 }) => {
-  const userId = ctx.userId;
+  const userId = ctx.user.id;
 
   // Fetch search history from the database or any other source
   const searches = await ReadSearchHistoryService({

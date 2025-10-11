@@ -11,7 +11,7 @@ const createCheckoutSessionController = async ({
 }) => {
   const checkoutSessionUrl = await CreateCheckoutSessionService({
     priceId: input.priceId,
-    userId: ctx.userId,
+    userId: ctx.user.id,
     repositories: {
       user: ctx.repositories.user,
     },

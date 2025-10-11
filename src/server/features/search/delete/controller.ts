@@ -12,7 +12,7 @@ const deleteSearchController = async ({
 }) => {
   const search = await DeleteSearchService({
     id: input.id,
-    userId: ctx.userId,
+    userId: ctx.user.id,
     repositories: {
       ...repositories,
       database: repositories.search,

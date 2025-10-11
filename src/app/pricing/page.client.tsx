@@ -92,8 +92,17 @@ const BillingToggle = () => {
   );
 };
 
-const BasicPlanFooter = ({ label, href }: { label: string; href: string }) => {
-  const { createCheckoutSession, router } = usePricing();
+const BasicPlanFooter = ({
+  label,
+  priceId,
+}: {
+  label: string;
+  priceId: {
+    monthly: string;
+    yearly: string;
+  };
+}) => {
+  const { createCheckoutSession, router, isYearly } = usePricing();
   const { data: session } = useSession();
 
   return (
@@ -104,7 +113,7 @@ const BasicPlanFooter = ({ label, href }: { label: string; href: string }) => {
         onClick={() => {
           if (session) {
             createCheckoutSession({
-              priceId: href,
+              priceId: isYearly ? priceId.yearly : priceId.monthly,
             });
           } else {
             router.push("/auth/login");

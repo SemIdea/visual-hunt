@@ -8,6 +8,8 @@ const CreateCheckoutSessionService = async ({
   repositories,
   ...data
 }: ICreateCheckoutSessionDTO) => {
+  console.log("CreateCheckoutSessionService called with:", data);
+
   const user = await UserEntity.read({
     id: data.userId,
     repositories: {
@@ -29,8 +31,8 @@ const CreateCheckoutSessionService = async ({
       },
       payment_method_types: ["card"],
       mode: "subscription", // Important: this sets up a recurring payment
-      success_url: `http://localhost:3000/dashboard?success=true`,
-      cancel_url: `http://localhost:3000/pricing?canceled=true`,
+      success_url: `${process.env.NEXT_PUBLIC_URL}/dashboard?success=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_URL}/pricing?canceled=true`,
       adaptive_pricing: {
         enabled: true,
       },

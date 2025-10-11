@@ -8,6 +8,7 @@ import {
 import { BasicPlanFooter, Price, PricingType } from "../../page.client";
 import { Check, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import type { Plan } from "@/config/plans";
 
 const Plan = ({
   title,
@@ -16,17 +17,7 @@ const Plan = ({
   features,
   cta,
   highlighted = false,
-}: {
-  title: string;
-  description: string;
-  price: number;
-  features: Record<string, boolean>;
-  cta: {
-    label: string;
-    href: string;
-  };
-  highlighted?: boolean;
-}) => {
+}: Plan) => {
   return (
     <Card
       className={`flex flex-col bg-card/80 backdrop-blur-xl ${
@@ -62,7 +53,7 @@ const Plan = ({
           ))}
         </ul>
       </CardContent>
-      <BasicPlanFooter label={cta.label} href={cta.href} />
+      <BasicPlanFooter label={cta.label} priceId={cta.priceId} />
     </Card>
   );
 };

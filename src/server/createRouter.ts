@@ -6,7 +6,7 @@ const t = initTRPC.context<Context>().create();
 const publicProcedure = t.procedure;
 
 const protectedProcedure = t.procedure.use(({ ctx, next }) => {
-  if (!ctx.userId) {
+  if (!ctx.user) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "User is not authenticated",
@@ -16,7 +16,7 @@ const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   return next({
     ctx: {
       ...ctx,
-      userId: ctx.userId
+      user: ctx.user,
     },
   });
 });
