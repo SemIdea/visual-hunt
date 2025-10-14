@@ -1,0 +1,52 @@
+import { prisma } from "@/server/drivers/prisma";
+import { ISessionEntity, ISessionModel } from "../DTO";
+
+class PrismaSessionModel implements ISessionModel {
+  async create(
+    id: string,
+    data: Omit<ISessionEntity, "id" | "createdAt" | "updatedAt">
+  ) {
+    return await prisma.session.create({
+      data: {
+        id,
+        ...data,
+      },
+    });
+  }
+
+  async read(id: string) {
+    return await prisma.session.findUnique({
+      where: { id },
+    });
+  }
+
+  async readBySessionToken(sessionToken: string) {
+    return await prisma.session.findUnique({
+      where: { sessionToken },
+    });
+  }
+
+  async update(
+    id: string,
+    data: Partial<Omit<ISessionEntity, "id" | "createdAt" | "updatedAt">>
+  ) {
+    return await prisma.session.update({
+      where: { id },
+      data,
+    });
+  }
+
+  async delete(id: string) {
+    try {
+      await prisma.session.delete({
+        where: { id },
+      });
+
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+
+export { PrismaSessionModel };
