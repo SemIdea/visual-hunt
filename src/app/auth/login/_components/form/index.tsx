@@ -6,7 +6,9 @@ import { getProviders, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 const LoginForm = () => {
-  const [providers, setProviders] = useState<any>(null);
+  const [providers, setProviders] = useState<Awaited<
+    ReturnType<typeof getProviders>
+  > | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -20,7 +22,7 @@ const LoginForm = () => {
       <FieldGroup>
         <Field>
           {providers &&
-            Object.values(providers).map((provider: any) => (
+            Object.values(providers).map((provider) => (
               <Button
                 key={provider.name}
                 variant="outline"

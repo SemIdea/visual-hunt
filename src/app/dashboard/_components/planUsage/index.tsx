@@ -22,7 +22,7 @@ const PlanUsage = ({ user }: { user: NonNullable<User> }) => {
 
   // 2. Find the plan by checking both monthly and yearly IDs
   const planEntry = Object.entries(plans).find(
-    ([_, planDetails]) =>
+    ([, planDetails]) =>
       planDetails.cta.priceId.monthly === currentPriceId ||
       planDetails.cta.priceId.yearly === currentPriceId
   );
