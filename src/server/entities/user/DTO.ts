@@ -1,5 +1,8 @@
 import type { User } from "@prisma/client";
-import { IEntityDatabaseRepository } from "../base/entity";
+import {
+  IEntityCacheRepository,
+  IEntityDatabaseRepository,
+} from "../base/entity";
 
 type IUserEntity = User;
 
@@ -16,6 +19,7 @@ type IReadUserByEmailDTO = {
   email: string;
   repositories: {
     database: IUserModel;
+    cache: IEntityCacheRepository;
   };
 };
 
