@@ -3,18 +3,24 @@
 import { Button } from "@/components/ui/button";
 import { Field, FieldDescription, FieldGroup } from "@/components/ui/field";
 import { getProviders, signIn } from "next-auth/react";
+import { useEffect, useState } from "react";
 
-const LoginForm = ({
-  providers,
-}: {
-  providers: Awaited<ReturnType<typeof getProviders>>;
-}) => {
+const LoginForm = () => {
+  const [providers, setProviders] = useState<any>(null);
+
+  useEffect(() => {
+    (async () => {
+      const res = await getProviders();
+      setProviders(res);
+    })();
+  }, []);
+
   return (
     <form>
       <FieldGroup>
         <Field>
           {providers &&
-            Object.values(providers).map((provider) => (
+            Object.values(providers).map((provider: any) => (
               <Button
                 key={provider.name}
                 variant="outline"
