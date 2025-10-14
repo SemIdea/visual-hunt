@@ -1,8 +1,7 @@
-import { getServerSession } from "next-auth";
 import { helpers, IHelpers } from "./container/helpers";
 import { IRepositories, repositories } from "./container/repositories";
 import { UserEntity } from "./entities/user/entity";
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { auth } from "@/app/api/auth/[...nextauth]/auth";
 import { IUserEntity } from "./entities/user/DTO";
 
 type IBaseContextDTO = {
@@ -24,7 +23,7 @@ const createTRPCContext = async (): Promise<IAPIContextDTO> => {
     repositories,
   };
 
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session?.user) return ctx;
   const user = await UserEntity.readByEmail({

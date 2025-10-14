@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/authOptions";
+import { auth } from "../api/auth/[...nextauth]/auth";
 import { redirect } from "next/navigation";
 import { createCaller } from "@/server/caller";
 import UserInfo from "./_components/header";
@@ -7,7 +6,7 @@ import PlanUsage from "./_components/planUsage";
 import DashboardTabs from "./_components/tabs";
 
 const Page = async () => {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   const user = session?.user;
 
   if (!user || !user.email || !user.name || !user.image) {

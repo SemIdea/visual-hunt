@@ -1,6 +1,5 @@
 import { createCaller } from "@/server/caller";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { auth } from "@/app/api/auth/[...nextauth]/auth";
 import Results from "./_components/results";
 import DisplayImage from "./_components/displayImage";
 
@@ -20,7 +19,7 @@ const Page = async (props: PageProps) => {
 
   if (!search) return;
 
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session?.user) return;
 
