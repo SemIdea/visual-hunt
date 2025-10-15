@@ -9,15 +9,14 @@ class SessionEntityClass extends BaseEntity<
   ISessionEntity,
   ISessionModel,
   "session",
-  "sessionToken"
+  "id" | "sessionToken"
 > {
   async readBySessionToken({
     sessionToken,
     repositories,
   }: IReadSessionBySessionTokenDTO) {
-    const cachedSession = await this.readCachedEntityByIndex({
-      indexName: "sessionToken",
-      indexValue: sessionToken,
+    const cachedSession = await this.readCachedEntity({
+      id: sessionToken,
       repositories,
     });
 
@@ -41,15 +40,10 @@ class SessionEntityClass extends BaseEntity<
     super({
       shouldCache: true,
       cache: {
-        key: "session:%id%",
+        key: "session",
         ttl: 1000 * 60 * 15, // 15 minutes
       },
-      index: {
-        sessionToken: {
-          key: "session:sessionToken:%sessionToken%",
-          ttl: 1000 * 60 * 15, // 15 minutes
-        },
-      },
+      index: ["id", "sessionToken"],
     });
   }
 }

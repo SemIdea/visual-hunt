@@ -11,6 +11,7 @@ import { AccountEntity } from "@/server/entities/account/entity";
 import { helpers } from "@/server/container/helpers";
 import { repositories } from "@/server/container/repositories";
 import { SessionEntity } from "@/server/entities/session/entity";
+import { performance } from "perf_hooks";
 
 const prisma = new PrismaClient();
 
@@ -90,7 +91,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return user as AdapterUser; // Ensure the return type matches
     },
     getSessionAndUser: async (sessionToken: string) => {
-      const startTime = Date.now();
+      const startTime = performance.now(); // Use performance.now()
 
       const session = await SessionEntity.readBySessionToken({
         sessionToken,
@@ -102,6 +103,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       if (!session) return null;
 
+      const sessionTime = performance.now(); // Use performance.now()
+      // Multiply by 1000 and round for µs
+      console.log(
+        "Time to fetch session:",
+        Math.round((sessionTime - startTime) * 1000),
+        "µs"
+      );
+
       const user = await UserEntity.read({
         id: session.userId,
         repositories: {
@@ -111,10 +120,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       });
 
       if (!user) return null;
-      
-      const endTime = Date.now();
+
+      const userTime = performance.now(); // Use performance.now()
       console.log(
-        `getSessionAndUser took ${endTime - startTime} ms to execute.`
+        "Time to fetch user:",
+        Math.round((userTime - sessionTime) * 1000),
+        "µs"
+      );
+      console.log(
+        "Total time to fetch session and user:",
+        Math.round((userTime - startTime) * 1000),
+        "µs"
       );
 
       return {
@@ -138,8 +154,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   // Callbacks for extending the session with custom data
   callbacks: {
     async session({ session, user }) {
-      console.log("Session", session);
-      console.log("User", user);
+      // console.log("Session", session);
+      // console.log("User", user);
       // The `user` object here is the user from the database.
       // We can add the user ID to the session object.
       // if (session.user) {

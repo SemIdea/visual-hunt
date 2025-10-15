@@ -27,6 +27,7 @@ type IEntityCacheRepository = {
     }[]
   ) => Promise<boolean>;
   bulkDel: (keys: string[]) => Promise<boolean>;
+  scan: (pattern: string) => Promise<string | null>;
 };
 
 type IEntityBasic = {
@@ -100,13 +101,12 @@ type IndexKey<
 > = `${Base}:${Index}:%${Index}%`;
 
 type CacheConfig<Base extends string> = {
-  key: CacheKey<Base>;
+  key: `${Base}`;
   ttl: number;
 };
 
 type IndexConfig<Base extends string, Indexes extends string> = {
   [K in Indexes]: {
-    key: IndexKey<Base, K>;
     ttl: number;
   };
 };
@@ -118,7 +118,7 @@ class BaseEntity<
   Indexes extends keyof Entity & string = never
 > {
   cache?: CacheConfig<BaseIndex>;
-  index?: IndexConfig<BaseIndex, Indexes>;
+  index?: Indexes[];
   shouldCache?: boolean;
 
   constructor({
@@ -127,7 +127,7 @@ class BaseEntity<
     shouldCache,
   }: {
     cache?: CacheConfig<BaseIndex>;
-    index?: IndexConfig<BaseIndex, Indexes>;
+    index?: Indexes[];
     shouldCache?: boolean;
   }) {
     this.cache = cache;
@@ -142,35 +142,29 @@ class BaseEntity<
     );
   }
 
+  private _buildKey(data: Entity): string | null {
+    if (!this.cache || !this.cache.key || !this.index) return null;
+
+    let key = this.cache.key;
+
+    for (const indexField of this.index) {
+      const value = data[indexField];
+      key += `:${value}`;
+    }
+
+    return key;
+  }
+
   async cacheEntity({
     data,
     repositories,
   }: ICacheEntityReq<Entity>): Promise<void> {
-    if (!this.cache || !repositories.cache || !this.shouldCache) return;
+    if (!this.shouldCache || !this.cache) return;
 
-    const keysToCreate = [
-      {
-        key: this.resolveKey(this.cache.key, data),
-        value: JSON.stringify(data),
-        ttl: this.cache.ttl,
-      },
-    ];
+    const key = this._buildKey(data);
+    if (!key) return;
 
-    if (this.index) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      for (const [indexName, index] of Object.entries(this.index) as [
-        string,
-        { key: string; ttl: number }
-      ][]) {
-        keysToCreate.push({
-          key: this.resolveKey(index.key, data),
-          value: data.id,
-          ttl: index.ttl,
-        });
-      }
-    }
-
-    await repositories.cache.bulkSet(keysToCreate);
+    await repositories.cache.set(key, JSON.stringify(data), this.cache.ttl);
   }
 
   async readCachedEntity({
@@ -179,49 +173,17 @@ class BaseEntity<
   }: IReadCachedEntityReq): Promise<Entity | null> {
     if (!this.cache || !repositories.cache || !this.shouldCache) return null;
 
-    const indexPattern = this.cache.key;
+    const key = `${this.cache.key}*${id}*`;
 
-    const key = indexPattern.replace(/%id%/, id);
-
-    const cachedData = await repositories.cache.get(key);
+    const cachedData = await repositories.cache.scan(key);
 
     if (!cachedData) return null;
 
-    return JSON.parse(cachedData) as Entity;
-  }
+    const cachedDataValue = await repositories.cache.get(cachedData);
 
-  async readCachedEntityByIndex({
-    indexName,
-    indexValue,
-    repositories,
-  }: IReadCachedEntityByIndexReq<Indexes>): Promise<Entity | null> {
-    if (!this.index || !this.index[indexName] || !this.shouldCache) return null;
+    if (!cachedDataValue) return null;
 
-    const indexPattern = this.index[indexName].key;
-
-    const indexKey = indexPattern.replace(`%${indexName}%`, indexValue);
-
-    const entityId = await repositories.cache.get(indexKey);
-
-    if (!entityId) return null;
-
-    const fullKey = this.cache?.key.replace(/%(\w+)%/g, (_, field: string) => {
-      return field === "id" ? entityId : "";
-    });
-
-    if (!fullKey) return null;
-
-    const cachedEntity = await repositories.cache.get(fullKey);
-
-    if (!cachedEntity) return null;
-
-    try {
-      return JSON.parse(cachedEntity) as Entity;
-    } catch (err) {
-      console.error("Error parsing cached entity", err);
-
-      return null;
-    }
+    return JSON.parse(cachedDataValue) as Entity;
   }
 
   async deleteCachedEntity({
@@ -230,17 +192,10 @@ class BaseEntity<
   }: IDeleteCacheEntityReq<Entity>): Promise<void> {
     if (!this.cache || !repositories.cache || !this.shouldCache) return;
 
-    const mainKey = this.resolveKey(this.cache.key, data);
-    const keysToDelete = [mainKey];
+    const key = this._buildKey(data);
+    if (!key) return;
 
-    if (this.index) {
-      const indexKeys = Object.values(this.index).map((index) =>
-        this.resolveKey((index as { key: string }).key, data)
-      );
-      keysToDelete.push(...indexKeys);
-    }
-
-    await repositories.cache.bulkDel(keysToDelete);
+    await repositories.cache.del(key);
   }
 
   async create({ id, data, repositories }: IEntityCreateReq<Entity, Repos>) {

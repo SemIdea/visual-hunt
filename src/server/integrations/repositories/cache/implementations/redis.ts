@@ -68,6 +68,23 @@ class RedisCacheRepository implements ICacheRepositoryAdapter {
     const result = await this.redisClient.del(...keys);
     return result > 0;
   }
+
+  async scan(pattern: string): Promise<string | null> {
+    if (!this.redisClient) return null;
+    let cursor = "0";
+    do {
+      const [newCursor, keys] = await this.redisClient.scan(
+        cursor,
+        "MATCH",
+        pattern,
+        "COUNT",
+        100
+      );
+      if (keys.length > 0) return keys[0];
+      cursor = newCursor;
+    } while (cursor !== "0");
+    return null;
+  }
 }
 
 export { RedisCacheRepository };

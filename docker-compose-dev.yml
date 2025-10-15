@@ -18,7 +18,7 @@ services:
       retries: 5
   cache:
     container_name: redis-vhunt-dev
-    image: redis
+    image: redis:7.4.6
     volumes:
       - redisdata:/data
     ports:

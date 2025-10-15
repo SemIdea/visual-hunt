@@ -8,13 +8,13 @@ class UserEntityClass extends BaseEntity<
   "id" | "email"
 > {
   async readByEmail({ email, repositories }: IReadUserByEmailDTO) {
-    const cachedUser = this.readCachedEntityByIndex({
-      indexName: "email",
-      indexValue: email,
-      repositories,
-    });
+    // const cachedUser = this.readCachedEntityByIndex({
+    //   indexName: "email",
+    //   indexValue: email,
+    //   repositories,
+    // });
 
-    if (cachedUser) return cachedUser;
+    // if (cachedUser) return cachedUser;
 
     const user = await repositories.database.readByEmail(email);
 
@@ -32,19 +32,10 @@ class UserEntityClass extends BaseEntity<
     super({
       shouldCache: true,
       cache: {
-        key: "user:%id%",
+        key: "user",
         ttl: 1000 * 60 * 15, // 15 minutes
       },
-      index: {
-        email: {
-          key: "user:email:%email%",
-          ttl: 1000 * 60 * 15, // 15 minutes
-        },
-        id: {
-          key: "user:id:%id%",
-          ttl: 1000 * 60 * 15, // 15 minutes
-        },
-      },
+      index: ["id", "email"],
     });
   }
 }
