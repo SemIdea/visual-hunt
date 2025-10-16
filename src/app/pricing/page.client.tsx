@@ -103,22 +103,22 @@ const BasicPlanFooter = ({
   };
 }) => {
   const { createCheckoutSession, router, isYearly } = usePricing();
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
 
   return (
     <CardFooter>
       <Button
         variant="outline"
         className="w-full bg-transparent"
-        onClick={() => {
-          if (session) {
-            createCheckoutSession({
-              priceId: isYearly ? priceId.yearly : priceId.monthly,
-            });
-          } else {
-            router.push("/auth/login");
-          }
-        }}
+        // onClick={() => {
+        //   if (session) {
+        //     createCheckoutSession({
+        //       priceId: isYearly ? priceId.yearly : priceId.monthly,
+        //     });
+        //   } else {
+        //     router.push("/auth/login");
+        //   }
+        // }}
       >
         {label}
       </Button>

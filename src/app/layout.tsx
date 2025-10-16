@@ -26,15 +26,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const session = await auth();
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${roboto.variable} antialiased min-h-screen flex flex-col`}
       >
         <Providers
-          session={session}
           attribute="class"
           defaultTheme="system"
           enableSystem

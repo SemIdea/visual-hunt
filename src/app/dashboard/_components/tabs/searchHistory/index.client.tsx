@@ -69,7 +69,7 @@ const SearchHistory = ({ searches }: { searches: ISearchEntity[] }) => {
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end items-center gap-3">
-          <Link href={`/search/${search.id}`}>
+          <Link href={`/search/${search.id}`} prefetch={false}>
             <Button
               variant="outline"
               size="sm"

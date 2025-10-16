@@ -10,7 +10,7 @@ const DisplayResults = ({ results }: { results: IResultEntity[] }) => {
       className="break-inside-avoid overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:shadow-primary/20"
     >
       <CardContent className="p-0">
-        <Link href={result.link} className="block" target="_blank">
+        <Link href={result.link} className="block" target="_blank" prefetch={false}>
           <div className="relative w-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img

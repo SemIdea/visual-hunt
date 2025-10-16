@@ -30,7 +30,11 @@ const Header = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-8">
-              <Link className="flex items-center gap-2" href={"/"}>
+              <Link
+                className="flex items-center gap-2"
+                href={"/"}
+                prefetch={false}
+              >
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
                   <Search className="h-5 w-5 text-primary-foreground" />
                 </div>
@@ -40,12 +44,14 @@ const Header = () => {
                 <Link
                   href="/pricing"
                   className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  prefetch={false}
                 >
                   Pricing
                 </Link>
                 <Link
                   href="/#faq"
                   className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  prefetch={false}
                 >
                   FAQ
                 </Link>
