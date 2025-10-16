@@ -20,7 +20,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/auth/login",
   },
-
+  trustHost: true,
   // Your custom adapter logic is preserved
   adapter: {
     ...PrismaAdapter(prisma),
