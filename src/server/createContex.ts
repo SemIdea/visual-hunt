@@ -23,20 +23,20 @@ const createTRPCContext = async (): Promise<IAPIContextDTO> => {
     repositories,
   };
 
-  // const session = await auth();
+  const session = await auth();
 
-  // if (!session?.user) return ctx;
-  // const user = await UserEntity.readByEmail({
-  //   email: session.user.email!,
-  //   repositories: {
-  //     ...ctx.repositories,
-  //     database: ctx.repositories.user,
-  //   },
-  // });
+  if (!session?.user) return ctx;
+  const user = await UserEntity.readByEmail({
+    email: session.user.email!,
+    repositories: {
+      ...ctx.repositories,
+      database: ctx.repositories.user,
+    },
+  });
 
-  // if (!user) return ctx;
+  if (!user) return ctx;
 
-  // ctx.user = user;
+  ctx.user = user;
 
   return ctx;
 };
