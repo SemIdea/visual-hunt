@@ -3,9 +3,9 @@
 import { Search } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import LoadingUser from "./loading";
-import UnauthenticatedUser from "./unauthenticated";
-import AuthenticatedUser from "./authenticated";
+import LoadingUser from "./_components/loading";
+import UnauthenticatedUser from "./_components/unauthenticated";
+import AuthenticatedUser from "./_components/authenticated";
 
 const Header = () => {
   const { data, status } = useSession();
