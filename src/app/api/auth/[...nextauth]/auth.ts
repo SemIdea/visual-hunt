@@ -103,6 +103,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       if (!session) return null;
 
+      // Runtime safety: ensure Date instance
+      if (!(session.expires instanceof Date)) {
+        session.expires = new Date(session.expires);
+      }
+
       const sessionTime = performance.now(); // Use performance.now()
       // Multiply by 1000 and round for µs
       console.log(
