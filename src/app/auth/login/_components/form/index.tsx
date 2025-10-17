@@ -28,7 +28,7 @@ const LoginForm = () => {
                 variant="outline"
                 type="button"
                 className="cursor-pointer"
-                onClick={() => signIn(provider.id)}
+                onClick={() => signIn(provider.id, { redirectTo: "/" })}
               >
                 Login with {provider.name}
               </Button>
