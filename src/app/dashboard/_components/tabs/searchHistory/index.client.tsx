@@ -39,6 +39,16 @@ const SearchHistory = ({ searches }: { searches: ISearchEntity[] }) => {
     deleteSearchMutation({ id });
   };
 
+  if (searchList.length === 0) {
+    return (
+      <TableRow >
+        <TableCell colSpan={5} className="text-center">
+          No search history found.
+        </TableCell>
+      </TableRow>
+    );
+  }
+
   return searchList.map((search) => (
     <TableRow key={search.id}>
       <TableCell>

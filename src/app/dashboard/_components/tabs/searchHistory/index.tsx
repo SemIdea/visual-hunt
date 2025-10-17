@@ -13,9 +13,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { SearchHistory } from "./index.client";
-import { ISearchEntity } from "@/server/entities/search/DTO";
+import { createCaller } from "@/server/caller";
 
-const SearchHistoryTab = ({ searches }: { searches: ISearchEntity[] }) => {
+const SearchHistoryTab = async () => {
+  const caller = await createCaller();
+
+  const searches = await caller.search.readSearchHistory();
+
   return (
     <Card>
       <CardHeader>

@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,9 +11,17 @@ import {
 } from "@/components/ui/card";
 import { plans } from "@/config/plans";
 import { User } from "next-auth";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+import PlanUsageSkeleton from "./skeleton";
 
-const PlanUsage = ({ user }: { user: NonNullable<User> }) => {
+const PlanUsage = () => {
+  const { data } = useSession();
+
+  const user = data?.user as User;
+
+  if (!data?.user) return <PlanUsageSkeleton />;
+
   // 1. Get the user's current priceId from their subscription
   const currentPriceId = user.subscription?.priceId;
 
@@ -36,34 +46,39 @@ const PlanUsage = ({ user }: { user: NonNullable<User> }) => {
   const plan = planEntry[1];
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Plan & Usage</CardTitle>
-        <CardDescription>Manage your subscription and credits</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-medium">Current Plan:</span>
-            <Badge variant="default" className="text-sm dark:text-white">
-              {`${plan.title}`}
-            </Badge>
+    <>
+      {" "}
+      <Card>
+        <CardHeader>
+          <CardTitle>Plan & Usage</CardTitle>
+          <CardDescription>
+            Manage your subscription and credits
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium">Current Plan:</span>
+              <Badge variant="default" className="text-sm dark:text-white">
+                {`${plan.title}`}
+              </Badge>
+            </div>
+            <Link href="https://billing.stripe.com/p/login/test_8x29AT7xs65N15e9vM4Rq00">
+              <Button className="dark:text-white">Manage Subscription</Button>
+            </Link>
           </div>
-          <Link href="https://billing.stripe.com/p/login/test_8x29AT7xs65N15e9vM4Rq00">
-            <Button className="dark:text-white">Manage Subscription</Button>
-          </Link>
-        </div>
 
-        {/* Credit Balance */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t pt-6">
-          <div className="space-y-1">
-            <p className="text-sm font-medium">Credit Balance</p>
-            <p className="text-2xl font-bold">150 Credits Remaining</p>
+          {/* Credit Balance */}
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t pt-6">
+            <div className="space-y-1">
+              <p className="text-sm font-medium">Credit Balance</p>
+              <p className="text-2xl font-bold">150 Credits Remaining</p>
+            </div>
+            <Button variant="secondary">Buy More Credits</Button>
           </div>
-          <Button variant="secondary">Buy More Credits</Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </>
   );
 };
 
