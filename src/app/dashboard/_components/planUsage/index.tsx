@@ -22,7 +22,7 @@ const PlanUsage = () => {
   if (!user) return <PlanUsageSkeleton />;
 
   // 1. Get the user's current priceId from their subscription
-  const currentPriceId = user.subscription?.stripeSubscriptionId;
+  const currentPriceId = user.subscription?.stripePriceId;
 
   // Handle case where user has no active subscription
   if (!currentPriceId) {
@@ -38,7 +38,7 @@ const PlanUsage = () => {
 
   // Handle case where the plan is not found in your config (e.g., a legacy plan)
   if (!planEntry) {
-    return <p>You are on a custom or legacy plan.</p>;
+    return <p>{currentPriceId}You are on a custom or legacy plan.</p>;
   }
 
   // 3. Extract the plan name and determine the interval
