@@ -227,7 +227,7 @@ class BaseEntity<
 
   async read({ id, repositories }: IEntityReadReq<Entity, Repos>) {
     const cachedEntity = await this.readCachedEntity({
-      index: this.cache?.indexes[0]!,
+      index: "id" as Indexes,
       value: id,
       repositories: {
         cache: repositories.cache!,
