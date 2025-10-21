@@ -14,6 +14,7 @@ const createCheckoutSessionController = async ({
     userId: ctx.user.id,
     repositories: {
       user: ctx.repositories.user,
+      cache: ctx.repositories.cache,
     },
   });
 
