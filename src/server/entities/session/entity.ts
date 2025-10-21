@@ -1,6 +1,7 @@
 import { BaseEntity } from "../base/entity";
 import {
   AppSessionData,
+  InvalidateAllSessionsCacheDTO,
   IReadSessionBySessionTokenDTO,
   ISessionEntity,
   ISessionModel,
@@ -45,6 +46,20 @@ class SessionEntityClass extends BaseEntity<
     }
 
     return session;
+  }
+
+  async invalidateAllSessionsCache({
+    userId,
+    repositories,
+  }: InvalidateAllSessionsCacheDTO): Promise<void> {
+    const sessions = await repositories.database.readUserSessions(userId);
+
+    for (const session of sessions) {
+      const cacheKey = this._buildAppSessionKey(session.sessionToken);
+      if (repositories.cache) {
+        await repositories.cache.del(cacheKey);
+      }
+    }
   }
 
   constructor() {

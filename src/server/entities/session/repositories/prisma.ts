@@ -39,6 +39,12 @@ class PrismaSessionModel implements ISessionModel {
     })) as AppSessionData | null;
   }
 
+  async readUserSessions(userId: string) {
+    return await prisma.session.findMany({
+      where: { userId },
+    });
+  }
+
   async update(
     id: string,
     data: Partial<Omit<ISessionEntity, "id" | "createdAt" | "updatedAt">>

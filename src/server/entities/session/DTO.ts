@@ -12,6 +12,7 @@ type ISessionExtraRepositories = {
   readWithUserAndSubscriptionBySessionToken: (
     token: string
   ) => Promise<AppSessionData | null>;
+  readUserSessions: (userId: string) => Promise<ISessionEntity[]>;
 };
 
 type AppSessionData = ISessionEntity & {
@@ -40,10 +41,19 @@ type IReadSessionWithUserAndSubscriptionBySessionTokenDTO = {
   };
 };
 
+type InvalidateAllSessionsCacheDTO = {
+  userId: string;
+  repositories: {
+    database: ISessionModel;
+    cache: IEntityCacheRepository;
+  };
+};
+
 export type {
   ISessionEntity,
   ISessionModel,
   IReadSessionBySessionTokenDTO,
   AppSessionData,
   IReadSessionWithUserAndSubscriptionBySessionTokenDTO,
+  InvalidateAllSessionsCacheDTO,
 };
