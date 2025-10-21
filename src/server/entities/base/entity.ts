@@ -72,15 +72,15 @@ type ICacheEntityReq<Entity> = {
 };
 
 type IReadCachedEntityReq = {
-  id: string;
+  value: string;
   repositories: {
     cache: IEntityCacheRepository;
   };
 };
 
 type IReadCachedEntityByIndexReq<Indexes extends string> = {
-  indexName: Indexes;
-  indexValue: string;
+  value: string;
+  index: Indexes;
   repositories: {
     cache: IEntityCacheRepository;
   };
@@ -100,9 +100,10 @@ type IndexKey<
   Index extends string
 > = `${Base}:${Index}:%${Index}%`;
 
-type CacheConfig<Base extends string> = {
+type CacheConfig<Base extends string, Indexes extends string> = {
   key: `${Base}`;
   ttl: number;
+  indexes: Indexes[];
 };
 
 type IndexConfig<Base extends string, Indexes extends string> = {
@@ -117,8 +118,7 @@ class BaseEntity<
   BaseIndex extends string = "",
   Indexes extends keyof Entity & string = never
 > {
-  cache?: CacheConfig<BaseIndex>;
-  index?: Indexes[];
+  cache?: CacheConfig<BaseIndex, Indexes>;
   shouldCache?: boolean;
 
   constructor({
@@ -126,12 +126,11 @@ class BaseEntity<
     index,
     shouldCache,
   }: {
-    cache?: CacheConfig<BaseIndex>;
+    cache?: CacheConfig<BaseIndex, Indexes>;
     index?: Indexes[];
     shouldCache?: boolean;
   }) {
     this.cache = cache;
-    this.index = index;
     this.shouldCache = shouldCache;
   }
 
@@ -143,11 +142,11 @@ class BaseEntity<
   }
 
   private _buildKey(data: Entity): string | null {
-    if (!this.cache || !this.cache.key || !this.index) return null;
+    if (!this.cache || !this.cache.key) return null;
 
     let key = this.cache.key;
 
-    for (const indexField of this.index) {
+    for (const indexField of this.cache.indexes) {
       const value = data[indexField];
       key += `:${value}`;
     }
@@ -161,29 +160,37 @@ class BaseEntity<
   }: ICacheEntityReq<Entity>): Promise<void> {
     if (!this.shouldCache || !this.cache) return;
 
-    const key = this._buildKey(data);
-    if (!key) return;
+    const baseKey = this.cache.key;
+    const keys = [];
 
-    await repositories.cache.set(key, JSON.stringify(data), this.cache.ttl);
+    for (const indexField of this.cache.indexes) {
+      const value = data[indexField];
+      keys.push(`${baseKey}:${indexField}:${value}`);
+    }
+
+    await repositories.cache.bulkSet(
+      keys.map((key) => ({
+        key,
+        value: JSON.stringify(data),
+        ttl: this.cache?.ttl ?? 0,
+      }))
+    );
   }
 
   async readCachedEntity({
-    id,
+    value,
+    index,
     repositories,
-  }: IReadCachedEntityReq): Promise<Entity | null> {
+  }: IReadCachedEntityByIndexReq<Indexes>): Promise<Entity | null> {
     if (!this.cache || !repositories.cache || !this.shouldCache) return null;
 
-    const key = `${this.cache.key}*${id}*`;
+    const key = `${this.cache.key}:${index}:${value}`;
 
-    const cachedData = await repositories.cache.scan(key);
+    const cachedData = await repositories.cache.get(key);
 
     if (!cachedData) return null;
 
-    const cachedDataValue = await repositories.cache.get(cachedData);
-
-    if (!cachedDataValue) return null;
-
-    return JSON.parse(cachedDataValue) as Entity;
+    return JSON.parse(cachedData) as Entity;
   }
 
   async deleteCachedEntity({
@@ -192,10 +199,14 @@ class BaseEntity<
   }: IDeleteCacheEntityReq<Entity>): Promise<void> {
     if (!this.cache || !repositories.cache || !this.shouldCache) return;
 
-    const key = this._buildKey(data);
-    if (!key) return;
+    const keys = [];
 
-    await repositories.cache.del(key);
+    for (const indexField of this.cache.indexes) {
+      const value = data[indexField];
+      keys.push(`${this.cache.key}:${indexField}:${value}`);
+    }
+
+    await repositories.cache.bulkDel(keys);
   }
 
   async create({ id, data, repositories }: IEntityCreateReq<Entity, Repos>) {
@@ -216,7 +227,8 @@ class BaseEntity<
 
   async read({ id, repositories }: IEntityReadReq<Entity, Repos>) {
     const cachedEntity = await this.readCachedEntity({
-      id,
+      index: this.cache?.indexes[0]!,
+      value: id,
       repositories: {
         cache: repositories.cache!,
       },
