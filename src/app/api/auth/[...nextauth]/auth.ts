@@ -91,9 +91,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return user as AdapterUser; // Ensure the return type matches
     },
     getSessionAndUser: async (sessionToken: string) => {
-      const startTime = performance.now(); // Use performance.now()
-
-      const session = await SessionEntity.readBySessionToken({
+      const sessionAndUser = await SessionEntity.readBySessionToken({
         sessionToken,
         repositories: {
           ...repositories,
@@ -101,42 +99,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         },
       });
 
-      if (!session) return null;
+      if (!sessionAndUser) return null;
+
+      const { session, user } = sessionAndUser;
 
       // Runtime safety: ensure Date instance
       if (!(session.expires instanceof Date)) {
         session.expires = new Date(session.expires);
       }
-
-      const sessionTime = performance.now(); // Use performance.now()
-      // Multiply by 1000 and round for µs
-      console.log(
-        "Time to fetch session:",
-        Math.round((sessionTime - startTime) * 1000),
-        "µs"
-      );
-
-      const user = await UserEntity.read({
-        id: session.userId,
-        repositories: {
-          ...repositories,
-          database: repositories.user,
-        },
-      });
-
-      if (!user) return null;
-
-      const userTime = performance.now(); // Use performance.now()
-      console.log(
-        "Time to fetch user:",
-        Math.round((userTime - sessionTime) * 1000),
-        "µs"
-      );
-      console.log(
-        "Total time to fetch session and user:",
-        Math.round((userTime - startTime) * 1000),
-        "µs"
-      );
 
       return {
         session,
