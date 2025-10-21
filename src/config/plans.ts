@@ -5,7 +5,7 @@ export type Plan = {
   features: Record<string, boolean>;
   cta: {
     label: string;
-    priceId: { 
+    priceId: {
       monthly: string;
       yearly: string;
     };
@@ -28,8 +28,8 @@ export const plans: Record<"basic" | "pro" | "expert", Plan> = {
     cta: {
       label: "Get Started",
       priceId: {
-        monthly: process.env.STRIPE_BASIC_MONTHLY_PRICE_ID || "",
-        yearly: process.env.STRIPE_BASIC_YEARLY_PRICE_ID || "",
+        monthly: process.env.NEXT_PUBLIC_STRIPE_BASIC_MONTHLY_PRICE_ID || "",
+        yearly: process.env.NEXT_PUBLIC_STRIPE_BASIC_YEARLY_PRICE_ID || "",
       },
     },
   },
@@ -47,8 +47,8 @@ export const plans: Record<"basic" | "pro" | "expert", Plan> = {
     cta: {
       label: "Get Started",
       priceId: {
-        monthly: process.env.STRIPE_PRO_MONTHLY_PRICE_ID || "",
-        yearly: process.env.STRIPE_PRO_YEARLY_PRICE_ID || "",
+        monthly: process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID || "",
+        yearly: process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID || "",
       },
     },
     highlighted: true,
@@ -67,8 +67,8 @@ export const plans: Record<"basic" | "pro" | "expert", Plan> = {
     cta: {
       label: "Get Started",
       priceId: {
-        monthly: process.env.STRIPE_EXPERT_MONTHLY_PRICE_ID || "",
-        yearly: process.env.STRIPE_EXPERT_YEARLY_PRICE_ID || "",
+        monthly: process.env.NEXT_PUBLIC_STRIPE_EXPERT_MONTHLY_PRICE_ID || "",
+        yearly: process.env.NEXT_PUBLIC_STRIPE_EXPERT_YEARLY_PRICE_ID || "",
       },
     },
   },
