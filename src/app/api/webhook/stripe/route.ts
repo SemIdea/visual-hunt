@@ -1,4 +1,6 @@
+import { repositories } from "@/server/container/repositories";
 import { prisma } from "@/server/drivers/prisma";
+import { SessionEntity } from "@/server/entities/session/entity";
 import { SubscriptionStatus } from "@prisma/client";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -138,6 +140,14 @@ export async function POST(request: Request) {
         });
       }
 
+      await SessionEntity.invalidateAllSessionsCache({
+        userId,
+        repositories: {
+          ...repositories,
+          database: repositories.session,
+        },
+      });
+
       console.log(
         `checkout.session.completed processed for user ${userId} (subscription ${subscription.id})`
       );
@@ -145,6 +155,31 @@ export async function POST(request: Request) {
 
     case "customer.subscription.updated": {
       const subscription = event.data.object as Stripe.Subscription;
+
+      const user = await prisma.user.findFirst({
+        where: {
+          subscription: {
+            is: {
+              stripeSubscriptionId: subscription.id,
+            }
+          },
+        },
+      });
+
+      if (!user) {
+        console.error(
+          `customer.subscription.updated webhook missing metadata.userId; cannot update subscription ${subscription.id}`
+        );
+        break;
+      }
+
+      await SessionEntity.invalidateAllSessionsCache({
+        userId: user.id,
+        repositories: {
+          ...repositories,
+          database: repositories.session,
+        },
+      });
 
       await prisma.subscription.update({
         where: {
