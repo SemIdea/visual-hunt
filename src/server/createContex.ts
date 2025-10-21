@@ -1,7 +1,5 @@
 import { helpers, IHelpers } from "./container/helpers";
 import { IRepositories, repositories } from "./container/repositories";
-import { UserEntity } from "./entities/user/entity";
-import { auth } from "@/app/api/auth/[...nextauth]/auth";
 import { User } from "next-auth";
 
 type IBaseContextDTO = {

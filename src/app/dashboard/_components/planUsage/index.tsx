@@ -10,7 +10,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { plans } from "@/config/plans";
-import { User } from "next-auth";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import PlanUsageSkeleton from "./skeleton";
@@ -18,12 +17,12 @@ import PlanUsageSkeleton from "./skeleton";
 const PlanUsage = () => {
   const { data } = useSession();
 
-  const user = data?.user as User;
+  const user = data?.user;
 
-  if (!data?.user) return <PlanUsageSkeleton />;
+  if (!user) return <PlanUsageSkeleton />;
 
   // 1. Get the user's current priceId from their subscription
-  const currentPriceId = user.subscription?.priceId;
+  const currentPriceId = user.subscription?.stripeSubscriptionId;
 
   // Handle case where user has no active subscription
   if (!currentPriceId) {

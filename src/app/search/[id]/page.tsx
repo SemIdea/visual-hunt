@@ -1,5 +1,4 @@
 import { createCaller } from "@/server/caller";
-import { auth } from "@/app/api/auth/[...nextauth]/auth";
 import Results from "./_components/results";
 import DisplayImage from "./_components/displayImage";
 
@@ -18,12 +17,6 @@ const Page = async (props: PageProps) => {
   });
 
   if (!search) return;
-
-  // const session = await auth();
-
-  // if (!session?.user) return;
-
-  // const user = session.user;
 
   return (
     <section className="container mx-auto px-4">

@@ -26,6 +26,13 @@ class PrismaUserModel implements IUserModel {
     });
   }
 
+  async readWithSubscription(userId: string) {
+    return await prisma.user.findUnique({
+      where: { id: userId },
+      include: { subscription: true },
+    });
+  }
+
   async update(
     id: string,
     data: Partial<Omit<IUserEntity, "id" | "createdAt" | "updatedAt">>

@@ -1,10 +1,13 @@
-import type { User } from "@prisma/client";
+import type { Subscription, User } from "@prisma/client";
 import {
   IEntityCacheRepository,
   IEntityDatabaseRepository,
 } from "../base/entity";
 
 type IUserEntity = User;
+type IUserWithSubscription = IUserEntity & {
+  subscription?: Subscription;
+};
 
 type IUserExtraRepositories = {
   readByEmail: (email: string) => Promise<IUserEntity | null>;
@@ -23,4 +26,18 @@ type IReadUserByEmailDTO = {
   };
 };
 
-export type { IUserEntity, IUserModel, IReadUserByEmailDTO };
+type IReadUserWithSubscriptionDTO = {
+  userId: string;
+  repositories: {
+    database: IUserModel;
+    cache: IEntityCacheRepository;
+  };
+};
+
+export type {
+  IUserEntity,
+  IUserModel,
+  IReadUserByEmailDTO,
+  IReadUserWithSubscriptionDTO,
+  IUserWithSubscription
+};

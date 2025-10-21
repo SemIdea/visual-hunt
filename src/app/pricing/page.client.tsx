@@ -2,13 +2,13 @@
 
 import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { trpc } from "../_trpc/client";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { useSession } from "next-auth/react";
 
 type CheckoutInput = { priceId: string };
 
@@ -103,22 +103,22 @@ const BasicPlanFooter = ({
   };
 }) => {
   const { createCheckoutSession, router, isYearly } = usePricing();
-  // const { data: session } = useSession();
+  const { data: session } = useSession();
 
   return (
     <CardFooter>
       <Button
         variant="outline"
         className="w-full bg-transparent"
-        // onClick={() => {
-        //   if (session) {
-        //     createCheckoutSession({
-        //       priceId: isYearly ? priceId.yearly : priceId.monthly,
-        //     });
-        //   } else {
-        //     router.push("/auth/login");
-        //   }
-        // }}
+        onClick={() => {
+          if (session) {
+            createCheckoutSession({
+              priceId: isYearly ? priceId.yearly : priceId.monthly,
+            });
+          } else {
+            router.push("/auth/login");
+          }
+        }}
       >
         {label}
       </Button>

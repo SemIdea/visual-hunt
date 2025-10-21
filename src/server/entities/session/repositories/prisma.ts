@@ -1,5 +1,5 @@
 import { prisma } from "@/server/drivers/prisma";
-import { ISessionEntity, ISessionModel } from "../DTO";
+import { AppSessionData, ISessionEntity, ISessionModel } from "../DTO";
 
 class PrismaSessionModel implements ISessionModel {
   async create(
@@ -24,6 +24,19 @@ class PrismaSessionModel implements ISessionModel {
     return await prisma.session.findUnique({
       where: { sessionToken },
     });
+  }
+
+  async readWithUserAndSubscriptionBySessionToken(sessionToken: string) {
+    return (await prisma.session.findUnique({
+      where: { sessionToken },
+      include: {
+        user: {
+          include: {
+            subscription: true,
+          },
+        },
+      },
+    })) as AppSessionData | null;
   }
 
   async update(

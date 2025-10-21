@@ -1,31 +1,19 @@
 // types/next-auth.d.ts
 
+import { Subscription } from "@prisma/client";
 import { DefaultSession, DefaultUser } from "next-auth";
 
-// Define the shape of your subscription data
-interface Subscription {
-  status: string | null;
-  currentPeriodEnd: Date | null;
-  priceId: string | null;
-}
 
 // Extend the existing User and Session types
 declare module "next-auth" {
   interface User {
-    subscription?: Subscription;
+    subscription?: Subscription | null;
   }
 
   interface Session extends DefaultSession {
     user?: User & DefaultSession["user"];
   }
 }
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    subscription?: Subscription;
-  }
-}
-
 
 // src/types/auth.d.ts
 
@@ -40,6 +28,6 @@ declare module "next-auth/adapters" {
    * Now, everywhere in your project, AdapterUser will have this new property.
    */
   interface AdapterUser {
-    subscription?: "free" | "premium" | "enterprise";
+    subscription?: Subscription | null;
   }
 }

@@ -71,13 +71,6 @@ type ICacheEntityReq<Entity> = {
   };
 };
 
-type IReadCachedEntityReq = {
-  value: string;
-  repositories: {
-    cache: IEntityCacheRepository;
-  };
-};
-
 type IReadCachedEntityByIndexReq<Indexes extends string> = {
   value: string;
   index: Indexes;
@@ -93,23 +86,10 @@ type IDeleteCacheEntityReq<Entity> = {
   };
 };
 
-type CacheKey<Base extends string> = `${Base}:%id%`;
-
-type IndexKey<
-  Base extends string,
-  Index extends string
-> = `${Base}:${Index}:%${Index}%`;
-
 type CacheConfig<Base extends string, Indexes extends string> = {
   key: `${Base}`;
   ttl: number;
   indexes: Indexes[];
-};
-
-type IndexConfig<Base extends string, Indexes extends string> = {
-  [K in Indexes]: {
-    ttl: number;
-  };
 };
 
 class BaseEntity<
@@ -123,11 +103,9 @@ class BaseEntity<
 
   constructor({
     cache,
-    index,
     shouldCache,
   }: {
     cache?: CacheConfig<BaseIndex, Indexes>;
-    index?: Indexes[];
     shouldCache?: boolean;
   }) {
     this.cache = cache;
@@ -139,19 +117,6 @@ class BaseEntity<
       /%(\w+)%/g,
       (_, key) => data[key as keyof Entity]?.toString() || ""
     );
-  }
-
-  private _buildKey(data: Entity): string | null {
-    if (!this.cache || !this.cache.key) return null;
-
-    let key = this.cache.key;
-
-    for (const indexField of this.cache.indexes) {
-      const value = data[indexField];
-      key += `:${value}`;
-    }
-
-    return key;
   }
 
   async cacheEntity({
