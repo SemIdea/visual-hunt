@@ -9,10 +9,7 @@ type ProvidersProps = {
   children: ReactNode;
 } & ComponentProps<typeof NextThemesProvider>;
 
-function Providers({
-  children,
-  ...themeProps
-}: ProvidersProps): ReactNode {
+function Providers({ children, ...themeProps }: ProvidersProps): ReactNode {
   return (
     <SessionProvider
       refetchOnWindowFocus={false}

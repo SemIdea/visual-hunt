@@ -28,7 +28,7 @@ const Page = async (props: PageProps) => {
   return (
     <section className="container mx-auto px-4">
       <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-8">
-        {/* <DisplayImage user={user} search={search} /> */}
+        <DisplayImage search={search} />
         <Results search={search} />
       </div>
     </section>

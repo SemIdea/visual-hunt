@@ -2,7 +2,7 @@ import { helpers, IHelpers } from "./container/helpers";
 import { IRepositories, repositories } from "./container/repositories";
 import { UserEntity } from "./entities/user/entity";
 import { auth } from "@/app/api/auth/[...nextauth]/auth";
-import { IUserEntity } from "./entities/user/DTO";
+import { User } from "next-auth";
 
 type IBaseContextDTO = {
   helpers: IHelpers;
@@ -10,11 +10,11 @@ type IBaseContextDTO = {
 };
 
 type IAPIContextDTO = IBaseContextDTO & {
-  user?: IUserEntity;
+  user?: User;
 };
 
 type IProtectedAPIContextDTO = IBaseContextDTO & {
-  user: IUserEntity;
+  user: Required<User>;
 };
 
 const createTRPCContext = async (): Promise<IAPIContextDTO> => {
@@ -22,21 +22,6 @@ const createTRPCContext = async (): Promise<IAPIContextDTO> => {
     helpers,
     repositories,
   };
-
-  const session = await auth();
-
-  if (!session?.user) return ctx;
-  const user = await UserEntity.readByEmail({
-    email: session.user.email!,
-    repositories: {
-      ...ctx.repositories,
-      database: ctx.repositories.user,
-    },
-  });
-
-  if (!user) return ctx;
-
-  ctx.user = user;
 
   return ctx;
 };
