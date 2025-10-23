@@ -33,6 +33,18 @@ class PrismaUserModel implements IUserModel {
     });
   }
 
+  async readBySubscriptionId(subscriptionId: string) {
+    return await prisma.user.findFirst({
+      where: {
+        subscription: {
+          is: {
+            stripeSubscriptionId: subscriptionId,
+          },
+        },
+      },
+    });
+  }
+
   async update(
     id: string,
     data: Partial<Omit<IUserEntity, "id" | "createdAt" | "updatedAt">>

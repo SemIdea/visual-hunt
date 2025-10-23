@@ -1,6 +1,7 @@
 import { BaseEntity } from "../base/entity";
 import {
   IReadUserByEmailDTO,
+  IReadUserBySubscriptionIdDTO,
   IReadUserWithSubscriptionDTO,
   IUserEntity,
   IUserModel,
@@ -53,6 +54,17 @@ class UserEntityClass extends BaseEntity<
       data: user,
       repositories,
     });
+
+    return user;
+  }
+
+  async readBySubscriptionId({
+    subscriptionId,
+    repositories,
+  }: IReadUserBySubscriptionIdDTO) {
+    const user = await repositories.database.readBySubscriptionId(
+      subscriptionId
+    );
 
     return user;
   }

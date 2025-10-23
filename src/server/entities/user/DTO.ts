@@ -11,6 +11,9 @@ type IUserWithSubscription = IUserEntity & {
 
 type IUserExtraRepositories = {
   readByEmail: (email: string) => Promise<IUserEntity | null>;
+  readBySubscriptionId: (
+    subscriptionId: string
+  ) => Promise<IUserWithSubscription | null>;
 };
 
 type IUserModel = IEntityDatabaseRepository<
@@ -34,10 +37,18 @@ type IReadUserWithSubscriptionDTO = {
   };
 };
 
+type IReadUserBySubscriptionIdDTO = {
+  subscriptionId: string;
+  repositories: {
+    database: IUserModel;
+  };
+};
+
 export type {
   IUserEntity,
   IUserModel,
   IReadUserByEmailDTO,
   IReadUserWithSubscriptionDTO,
-  IUserWithSubscription
+  IUserWithSubscription,
+  IReadUserBySubscriptionIdDTO,
 };
