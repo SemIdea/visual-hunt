@@ -6,6 +6,8 @@ import { ISearchModel } from "../entities/search/DTO";
 import { PrismaSearchModel } from "../entities/search/repositories/prisma";
 import { ISessionModel } from "../entities/session/DTO";
 import { PrismaSessionModel } from "../entities/session/repositories/prisma";
+import { ISubscriptionModel } from "../entities/subscription/DTO";
+import { ISubscriptionPrismaModel } from "../entities/subscription/repositories/prisma";
 import { IUserModel } from "../entities/user/DTO";
 import { PrismaUserModel } from "../entities/user/repositories/prisma";
 import { ICacheRepositoryAdapter } from "../integrations/repositories/cache/adapter";
@@ -18,6 +20,7 @@ type IRepositories = {
   account: IAccountModel;
   cache: ICacheRepositoryAdapter;
   session: ISessionModel;
+  subscription: ISubscriptionModel;
 };
 
 const repositories: IRepositories = {
@@ -27,6 +30,7 @@ const repositories: IRepositories = {
   account: new PrismaAccountModel(),
   cache: new RedisCacheRepository(),
   session: new PrismaSessionModel(),
+  subscription: new ISubscriptionPrismaModel(),
 };
 
 export { repositories };
