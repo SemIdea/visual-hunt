@@ -1,11 +1,23 @@
+import { helpers } from "@/server/container/helpers";
 import { repositories } from "@/server/container/repositories";
-import { prisma } from "@/server/drivers/prisma";
 import { SessionEntity } from "@/server/entities/session/entity";
+import { SubscriptionEntity } from "@/server/entities/subscription/entity";
+import { UserEntity } from "@/server/entities/user/entity";
 import { SubscriptionStatus } from "@prisma/client";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY!;
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!;
+
+if (!STRIPE_SECRET_KEY) {
+  throw new Error("Missing STRIPE_SECRET_KEY environment variable.");
+}
+if (!STRIPE_WEBHOOK_SECRET) {
+  throw new Error("Missing STRIPE_WEBHOOK_SECRET environment variable.");
+}
+
+const stripe = new Stripe(STRIPE_SECRET_KEY);
 
 const parseStatus = (
   status: Stripe.Subscription.Status
@@ -21,9 +33,147 @@ const parseStatus = (
     case "past_due":
       return "PAST_DUE";
     default:
+      // Default to CANCELED to be safe.
       return "CANCELED";
   }
 };
+
+async function syncSubscription(
+  userId: string,
+  subscription: Stripe.Subscription
+) {
+  const firstItem = subscription.items.data[0];
+  if (!firstItem) {
+    console.error(
+      `Stripe subscription ${subscription.id} has no items; cannot sync.`
+    );
+    return;
+  }
+
+  const subscriptionData = {
+    stripeSubscriptionId: subscription.id,
+    stripePriceId: firstItem.price.id,
+    status: parseStatus(subscription.status),
+    currentPeriodEnd: new Date(firstItem.current_period_end * 1000),
+  };
+
+  const existingSub = await SubscriptionEntity.readByUserId({
+    userId,
+    repositories: {
+      ...repositories,
+      database: repositories.subscription,
+    },
+  });
+
+  if (existingSub) {
+    await SubscriptionEntity.updateByUserId({
+      userId,
+      data: subscriptionData,
+      repositories: {
+        ...repositories,
+        database: repositories.subscription,
+      },
+    });
+    console.log(`Updated subscription for user ${userId}`);
+  } else {
+    await SubscriptionEntity.create({
+      id: helpers.uid.generate(),
+      data: {
+        ...subscriptionData,
+        userId,
+      },
+      repositories: {
+        ...repositories,
+        database: repositories.subscription,
+      },
+    });
+    console.log(`Created new subscription for user ${userId}`);
+  }
+
+  await SessionEntity.invalidateAllSessionsCache({
+    userId,
+    repositories: {
+      ...repositories,
+      database: repositories.session,
+    },
+  });
+  console.log(`Invalidated session cache for user ${userId}`);
+}
+
+async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+  const userId = session.metadata?.userId;
+  if (!userId) {
+    console.error(
+      "checkout.session.completed: Webhook missing metadata.userId."
+    );
+    return;
+  }
+
+  const user = await UserEntity.read({
+    id: userId,
+    repositories: {
+      ...repositories,
+      database: repositories.user,
+    },
+  });
+
+  if (!user) {
+    console.error(`checkout.session.completed: User ${userId} not found.`);
+    return;
+  }
+
+  if (!session.subscription) {
+    console.error(
+      `checkout.session.completed: Session ${session.id} has no subscription.`
+    );
+    return;
+  }
+
+  if (!user.stripeCustomerId && session.customer) {
+    await UserEntity.update({
+      id: userId,
+      data: { stripeCustomerId: session.customer as string },
+      repositories: {
+        ...repositories,
+        database: repositories.user,
+      },
+    });
+    console.log(`Updated stripeCustomerId for user ${userId}`);
+  }
+
+  const subscription = await stripe.subscriptions.retrieve(
+    session.subscription as string
+  );
+
+  await syncSubscription(userId, subscription);
+
+  console.log(
+    `Processed checkout.session.completed for user ${userId} (sub ${subscription.id})`
+  );
+}
+
+async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
+  const user = await UserEntity.readBySubscriptionId({
+    subscriptionId: subscription.id,
+    repositories: {
+      ...repositories,
+      database: repositories.user,
+    },
+  });
+
+  if (!user) {
+    console.error(
+      `customer.subscription.updated: Could not find user for subscription ${subscription.id}`
+    );
+    return;
+  }
+
+  await syncSubscription(user.id, subscription);
+
+  console.log(
+    `Processed customer.subscription.updated for user ${user.id} (sub ${subscription.id})`
+  );
+}
 
 export async function POST(request: Request) {
   const signature = request.headers.get("stripe-signature");
@@ -42,7 +192,7 @@ export async function POST(request: Request) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
+      STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : "Unknown error";
@@ -53,150 +203,29 @@ export async function POST(request: Request) {
     );
   }
 
-  switch (event.type) {
-    case "checkout.session.completed": {
-      const session = event.data.object as Stripe.Checkout.Session;
-
-      const userId = session.metadata?.userId;
-      if (!userId) {
-        console.error(
-          "checkout.session.completed webhook missing metadata.userId; cannot attach subscription"
+  try {
+    switch (event.type) {
+      case "checkout.session.completed":
+        await handleCheckoutCompleted(
+          event.data.object as Stripe.Checkout.Session
         );
         break;
-      }
 
-      const user = await prisma.user.findUnique({ where: { id: userId } });
-      if (!user) {
-        console.error(
-          `checkout.session.completed: user ${userId} not found; cannot attach subscription.`
+      case "customer.subscription.updated":
+        await handleSubscriptionUpdated(
+          event.data.object as Stripe.Subscription
         );
         break;
-      }
 
-      if (!session.subscription) {
-        console.error(
-          `checkout.session.completed: session has no subscription for user ${userId}`
-        );
-        break;
-      }
+      // case "customer.subscription.deleted":
+      //   // Handle final deletion
+      //   break;
 
-      const subscription = (await stripe.subscriptions.retrieve(
-        session.subscription as string
-      )) as Stripe.Subscription;
-
-      const firstItem = subscription.items.data[0];
-      if (!firstItem) {
-        console.error(
-          `Stripe subscription ${subscription.id} has no items; cannot persist.`
-        );
-        break;
-      }
-
-      const periodEnd = new Date(firstItem.current_period_end * 1000);
-
-      // If the user does not yet have stripeCustomerId, set it (idempotent safe update)
-      if (!user.stripeCustomerId && subscription.customer) {
-        await prisma.user.update({
-          where: { id: userId },
-          data: { stripeCustomerId: subscription.customer as string },
-        });
-      }
-
-      const existingUserSubscription = await prisma.subscription.findUnique({
-        where: { userId },
-      });
-
-      if (existingUserSubscription) {
-        if (existingUserSubscription.stripeSubscriptionId !== subscription.id) {
-          await prisma.subscription.update({
-            where: { userId },
-            data: {
-              stripeSubscriptionId: subscription.id,
-              stripePriceId: firstItem.price.id,
-              status: parseStatus(subscription.status),
-              currentPeriodEnd: periodEnd,
-            },
-          });
-        } else {
-          await prisma.subscription.update({
-            where: { userId },
-            data: {
-              stripePriceId: firstItem.price.id,
-              status: parseStatus(subscription.status),
-              currentPeriodEnd: periodEnd,
-            },
-          });
-        }
-      } else {
-        // No subscription for this user yet -> create
-        await prisma.subscription.create({
-          data: {
-            userId,
-            stripeSubscriptionId: subscription.id,
-            stripePriceId: firstItem.price.id,
-            status: parseStatus(subscription.status),
-            currentPeriodEnd: periodEnd,
-          },
-        });
-      }
-
-      await SessionEntity.invalidateAllSessionsCache({
-        userId,
-        repositories: {
-          ...repositories,
-          database: repositories.session,
-        },
-      });
-
-      console.log(
-        `checkout.session.completed processed for user ${userId} (subscription ${subscription.id})`
-      );
+      default:
+        console.log(`Unhandled Stripe event type: ${event.type}`);
     }
-
-    case "customer.subscription.updated": {
-      const subscription = event.data.object as Stripe.Subscription;
-
-      const user = await prisma.user.findFirst({
-        where: {
-          subscription: {
-            is: {
-              stripeSubscriptionId: subscription.id,
-            }
-          },
-        },
-      });
-
-      if (!user) {
-        console.error(
-          `customer.subscription.updated webhook missing metadata.userId; cannot update subscription ${subscription.id}`
-        );
-        break;
-      }
-
-      await SessionEntity.invalidateAllSessionsCache({
-        userId: user.id,
-        repositories: {
-          ...repositories,
-          database: repositories.session,
-        },
-      });
-
-      await prisma.subscription.update({
-        where: {
-          stripeSubscriptionId: subscription.id,
-        },
-        data: {
-          status: parseStatus(subscription.status), // Cast to your SubscriptionStatus enum
-          stripePriceId: subscription.items.data[0].price.id,
-          currentPeriodEnd: new Date(
-            subscription.items.data[0].current_period_end * 1000
-          ),
-        },
-      });
-
-      console.log(`Updated subscription ${subscription.id}`);
-      break;
-    }
+  } catch (error) {
+    console.error(`Error processing webhook ${event.id}:`, error);
   }
 
   return NextResponse.json({ received: true }, { status: 200 });
