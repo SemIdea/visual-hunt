@@ -20,12 +20,28 @@ class ISubscriptionPrismaModel implements ISubscriptionModel {
     });
   }
 
+  async readByUserId(userId: string) {
+    return await prisma.subscription.findUnique({
+      where: { userId },
+    });
+  }
+
   async update(
     id: string,
     data: Partial<Omit<ISubscriptionEntity, "id" | "createdAt" | "updatedAt">>
   ) {
     return await prisma.subscription.update({
       where: { id },
+      data,
+    });
+  }
+
+  async updateByUserId(
+    userId: string,
+    data: Partial<Omit<ISubscriptionEntity, "id" | "createdAt" | "updatedAt">>
+  ) {
+    return await prisma.subscription.update({
+      where: { userId },
       data,
     });
   }
