@@ -12,6 +12,7 @@ enum SearchStatus {
   PROCESSING
   COMPLETED
   FAILED
+  EMPTY
 }
 
 enum SubscriptionStatus {

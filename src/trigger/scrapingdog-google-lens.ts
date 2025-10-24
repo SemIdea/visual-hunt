@@ -1,6 +1,6 @@
 import { helpers } from "@/server/container/helpers";
 import { IResultEntity } from "@/server/entities/result/DTO";
-import { PrismaClient } from "@prisma/client/edge";
+import { PrismaClient, SearchStatus } from "@prisma/client/edge";
 import { task } from "@trigger.dev/sdk/v3";
 import { IResult } from "./types";
 
@@ -28,6 +28,26 @@ export const googleLensSearch = task({
 
     const data = await response.json();
 
+    if (!response.ok) {
+      await updateSearchStatus(payload.searchId, SearchStatus.FAILED);
+
+      console.error("ScrapingDog Google Lens API error:", data);
+
+      return {
+        success: false,
+        searchId: payload.searchId,
+      };
+    }
+
+    if (data.lens_results.length === 0) {
+      await updateSearchStatus(payload.searchId, SearchStatus.EMPTY);
+
+      return {
+        success: true,
+        searchId: payload.searchId,
+      };
+    }
+
     const resultsToCreate: IResultEntity[] = data.lens_results.map(
       (result: IResult, index: number) => ({
         id: helpers.uid.generate(),
@@ -45,14 +65,7 @@ export const googleLensSearch = task({
       skipDuplicates: true,
     });
 
-    await prisma.search.update({
-      where: {
-        id: payload.searchId,
-      },
-      data: {
-        status: "COMPLETED",
-      },
-    });
+    await updateSearchStatus(payload.searchId, SearchStatus.COMPLETED);
 
     return {
       success: true,
@@ -60,3 +73,14 @@ export const googleLensSearch = task({
     };
   },
 });
+
+async function updateSearchStatus(searchId: string, status: SearchStatus) {
+  await prisma.search.update({
+    where: {
+      id: searchId,
+    },
+    data: {
+      status,
+    },
+  });
+}
