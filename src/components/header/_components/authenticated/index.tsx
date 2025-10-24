@@ -1,4 +1,4 @@
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import UserAvatar from "@/components/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,10 +27,11 @@ const AuthenticatedUser = ({
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger>
-        <Avatar className="cursor-pointer">
-          <AvatarImage src={user.image || undefined} alt={user.name || ""} />
-          <Skeleton className="h-8 w-8 rounded-full" />
-        </Avatar>
+        <UserAvatar
+          alt={user.name || ""}
+          src={user.image || ""}
+          className="cursor-pointer"
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>{user.name}</DropdownMenuLabel>

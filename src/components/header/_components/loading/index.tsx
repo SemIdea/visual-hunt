@@ -1,13 +1,13 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { UserAvatarSkeleton } from "@/components/avatar/skeleton";
 
 const LoadingUser = ({
-  status
+  status,
 }: {
   status: "loading" | "authenticated" | "unauthenticated";
 }) => {
   if (status !== "loading") return null;
 
-  return <Skeleton className="h-8 w-8 rounded-full" />;
+  return <UserAvatarSkeleton />;
 };
 
 export default LoadingUser;
