@@ -8,6 +8,7 @@ import { ISearchEntity } from "@/server/entities/search/DTO";
 import { Trash } from "lucide-react";
 import { trpc } from "../../../../_trpc/client";
 import { useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
 
 const getStatusVariant = (status: string) => {
   switch (status) {
@@ -41,7 +42,7 @@ const SearchHistory = ({ searches }: { searches: ISearchEntity[] }) => {
 
   if (searchList.length === 0) {
     return (
-      <TableRow >
+      <TableRow>
         <TableCell colSpan={5} className="text-center">
           No search history found.
         </TableCell>
@@ -92,9 +93,10 @@ const SearchHistory = ({ searches }: { searches: ISearchEntity[] }) => {
             variant="destructive"
             size="sm"
             className="cursor-pointer"
+            disabled={deleteingId === search.id}
             onClick={() => deleteSearch(search.id)}
           >
-            <Trash />
+            {deleteingId === search.id ? <Spinner /> : <Trash size={16} />}
           </Button>
         </div>
       </TableCell>
