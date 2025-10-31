@@ -23,7 +23,7 @@ const getStatusVariant = (status: string) => {
   }
 };
 
-const SearchHistory = ({ searches }: { searches: ISearchEntity[] }) => {
+const SearchHistory = ({ searches }: { searches: ISearchEntity[] | [] }) => {
   const [searchList, setSearchList] = useState<ISearchEntity[]>(searches);
   const [deleteingId, setDeletingId] = useState<string | null>(null);
 
