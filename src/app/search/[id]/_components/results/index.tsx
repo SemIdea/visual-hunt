@@ -8,8 +8,7 @@ const Results = ({ search }: { search: ISearchEntityWithResults }) => {
       <h1 className="text-3xl font-bold text-foreground mb-6">
         Search Results
       </h1>
-      <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
-        {search.status == "COMPLETED" && (
+      {search.status == "COMPLETED" && (
           <DisplayResults results={search.results} />
         )}
         {search.status !== "COMPLETED" && (
@@ -19,7 +18,6 @@ const Results = ({ search }: { search: ISearchEntityWithResults }) => {
             searchId={search.id}
           />
         )}
-      </div>
     </div>
   );
 };

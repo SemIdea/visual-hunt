@@ -4,6 +4,7 @@ import DisplayResults from "./display";
 import { trpc } from "@/app/_trpc/client";
 import { useRealtimeRun } from "@trigger.dev/react-hooks";
 import { skipToken } from "@tanstack/react-query";
+import { Spinner } from "@/components/ui/spinner";
 
 const RunStatus = ({
   searchId,
@@ -36,7 +37,17 @@ const RunStatus = ({
     return <DisplayResults results={search.results} />;
   }
 
-  return <div>{run.status}</div>;
+  return (
+    <div className="flex flex-col items-center justify-center py-16 text-center">
+      <Spinner className="h-12 w-12 mb-4 text-primary" />
+      <h3 className="text-lg font-semibold text-foreground mb-2">
+        Searching across the web...
+      </h3>
+      <p className="text-muted-foreground">
+        We are querying multiple search engines to find the best matches.
+      </p>
+    </div>
+  );
 };
 
 export default RunStatus;
