@@ -63,13 +63,13 @@ import Plan from "./plan";
 // };
 
 const Plans = () => {
-  return (
-    <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-20">
-      {Object.values(plans).map((plan) => (
-        <Plan key={plan.title} {...plan} />
-      ))}
-    </div>
-  );
+    return (
+        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-20">
+            {Object.values(plans).map((plan) => (
+                <Plan key={plan.title} {...plan} />
+            ))}
+        </div>
+    );
 };
 
 export default Plans;

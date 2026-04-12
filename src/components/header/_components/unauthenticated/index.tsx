@@ -1,20 +1,20 @@
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const UnauthenticatedUser = ({
-  status,
+    status,
 }: {
-  status: "loading" | "authenticated" | "unauthenticated";
+    status: "loading" | "authenticated" | "unauthenticated";
 }) => {
-  if (status !== "unauthenticated") return null;
+    if (status !== "unauthenticated") return null;
 
-  return (
-    <Link href="/auth/login" prefetch={true}>
-      <Button className="dark:text-white cursor-pointer" size={"sm"}>
-        Login
-      </Button>
-    </Link>
-  );
+    return (
+        <Link href="/auth/login" prefetch={true}>
+            <Button className="dark:text-white cursor-pointer" size={"sm"}>
+                Login
+            </Button>
+        </Link>
+    );
 };
 
 export default UnauthenticatedUser;

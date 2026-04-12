@@ -1,34 +1,40 @@
-import { TRPCContext } from "@/server/root";
 import { auth, tasks } from "@trigger.dev/sdk";
 import { v4 } from "uuid";
+import type { TRPCContext } from "@/server/root";
 
-export const domain_searchWithUrl = async ({ ctx, input }: { ctx: TRPCContext; input: { url: string; userId: string } }) => {
-  const searchId = v4();
-  
-  const job = await tasks.trigger("scraping-dog-google-lens", {
-    searchId,
-    imageUrl: input.url,
-    type: "exact_matches",
-  });
+export const domain_searchWithUrl = async ({
+    ctx,
+    input,
+}: {
+    ctx: TRPCContext;
+    input: { url: string; userId: string };
+}) => {
+    const searchId = v4();
 
-  const publicAccessToken = await auth.createPublicToken({
-    scopes: {
-      read: {
-        runs: job.id,
-      },
-    },
-  });
+    const job = await tasks.trigger("scraping-dog-google-lens", {
+        searchId,
+        imageUrl: input.url,
+        type: "exact_matches",
+    });
 
-  const search = await ctx.db.search.create({
-    data: {
-      id: searchId,
-      source: input.url,
-      publicAccessToken,
-      status: "PENDING",
-      jobId: job.id,
-      userId: input.userId,
-    },
-  });
+    const publicAccessToken = await auth.createPublicToken({
+        scopes: {
+            read: {
+                runs: job.id,
+            },
+        },
+    });
 
-  return search;
+    const search = await ctx.db.search.create({
+        data: {
+            id: searchId,
+            source: input.url,
+            publicAccessToken,
+            status: "PENDING",
+            jobId: job.id,
+            userId: input.userId,
+        },
+    });
+
+    return search;
 };

@@ -3,8 +3,8 @@ import { router_search } from "./features/search/router";
 import { createTRPCRouter } from "./root";
 
 export const appRouter = createTRPCRouter({
-  search: router_search,
-  checkout: router_checkout,
+    search: router_search,
+    checkout: router_checkout,
 });
 
 export type AppRouter = typeof appRouter;
