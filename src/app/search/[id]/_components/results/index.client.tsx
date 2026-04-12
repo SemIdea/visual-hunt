@@ -1,9 +1,9 @@
 "use client";
 
 import DisplayResults from "./display";
-import { trpc } from "@/app/_trpc/client";
+import { useTRPC } from "@/lib/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 import { useRealtimeRun } from "@trigger.dev/react-hooks";
-import { skipToken } from "@tanstack/react-query";
 import { Spinner } from "@/components/ui/spinner";
 
 const RunStatus = ({
@@ -15,16 +15,16 @@ const RunStatus = ({
   jobId: string;
   publicAccessToken: string;
 }) => {
+  const trpc = useTRPC();
   const { run, error } = useRealtimeRun(jobId, {
     accessToken: publicAccessToken,
   });
 
-  const { data: search } = trpc.search.readSearchWithResults.useQuery(
-    run?.status === "COMPLETED"
-      ? {
-          id: searchId,
-        }
-      : skipToken
+  const { data: search } = useQuery(
+    trpc.search.readSearchWithResults.queryOptions(
+      { id: searchId },
+      { enabled: run?.status === "COMPLETED" }
+    )
   );
 
   if (error) {

@@ -1,6 +1,7 @@
-import { createCaller } from "@/server/caller";
 import Results from "./_components/results";
 import DisplayImage from "./_components/displayImage";
+import { appRouter } from "@/server/routes/app.routes";
+import { createTRPCContext } from "@/server/createContex";
 
 type PageProps = {
   params: Promise<{
@@ -10,7 +11,7 @@ type PageProps = {
 
 const Page = async (props: PageProps) => {
   const params = await props.params;
-  const caller = await createCaller();
+  const caller = appRouter.createCaller(await createTRPCContext());
 
   const search = await caller.search.readSearchWithResults({
     id: params.id,

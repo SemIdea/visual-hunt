@@ -1,7 +1,8 @@
 "use client";
 
-import { trpc } from "@/app/_trpc/client";
+import { useTRPC } from "@/lib/trpc/client";
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 import { ChangeEvent, DragEvent, useCallback, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,15 +31,18 @@ export const uploadFile = async (file: File | string): Promise<string> => {
 
 const useUploadImage = () => {
   const router = useRouter();
+  const trpc = useTRPC();
   const [imageUrl, setImageUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { mutate: search } = trpc.search.searchWithUrl.useMutation({
-    onSuccess: (data) => {
-      setIsLoading(false);
-      router.push(`/search/${data.id}`);
-    },
-  });
+  const { mutate: search } = useMutation(
+    trpc.search.searchWithUrl.mutationOptions({
+      onSuccess: (data) => {
+        setIsLoading(false);
+        router.push(`/search/${data.id}`);
+      },
+    })
+  );
 
   const handleSubmit = useCallback(async () => {
     if (!imageUrl) return;

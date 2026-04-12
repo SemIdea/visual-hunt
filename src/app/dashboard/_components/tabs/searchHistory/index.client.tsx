@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { ISearchEntity } from "@/server/entities/search/DTO";
 import { Trash } from "lucide-react";
-import { trpc } from "../../../../_trpc/client";
+import { useTRPC } from "@/lib/trpc/client";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -24,15 +25,16 @@ const getStatusVariant = (status: string) => {
 };
 
 const SearchHistory = ({ searches }: { searches: ISearchEntity[] | [] }) => {
+  const trpc = useTRPC();
   const [searchList, setSearchList] = useState<ISearchEntity[]>(searches);
   const [deleteingId, setDeletingId] = useState<string | null>(null);
 
-  const { mutate: deleteSearchMutation } = trpc.search.deleteSearch.useMutation(
-    {
+  const { mutate: deleteSearchMutation } = useMutation(
+    trpc.search.deleteSearch.mutationOptions({
       onSuccess: () => {
         setSearchList((prev) => prev.filter((s) => s.id !== deleteingId));
       },
-    }
+    })
   );
 
   const deleteSearch = (id: string) => {

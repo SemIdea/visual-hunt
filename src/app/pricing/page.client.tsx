@@ -2,7 +2,8 @@
 
 import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { trpc } from "../_trpc/client";
+import { useTRPC } from "@/lib/trpc/client";
+import { useMutation } from "@tanstack/react-query";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { CardContent, CardFooter } from "@/components/ui/card";
@@ -29,6 +30,7 @@ const PricingContext = createContext<PricingContextValue | undefined>(
 
 const PricingProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
+  const trpc = useTRPC();
   const [isYearly, setIsYearly] = useState(false);
   const [credits, setCredits] = useState<number[]>([100]);
 
@@ -37,11 +39,13 @@ const PricingProvider = ({ children }: { children: ReactNode }) => {
 
   const creditPrice = useMemo(() => (credits[0] / 10).toFixed(0), [credits]);
 
-  const { mutate } = trpc.checkout.create.useMutation({
-    onSuccess(data) {
-      if (data.url) router.push(data.url);
-    },
-  });
+  const { mutate } = useMutation(
+    trpc.checkout.create.mutationOptions({
+      onSuccess(data) {
+        if (data.url) router.push(data.url);
+      },
+    })
+  );
 
   const value: PricingContextValue = {
     isYearly,
