@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { stripe } from "@/lib/stripe";
+import { stripe } from "@/server/lib/stripe";
 import type { TRPCContext } from "@/server/root";
 
 export const domain_createCheckoutSession = async ({

@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client/edge";
 import { task } from "@trigger.dev/sdk/v3";
 import { getJson } from "serpapi";
-import { helpers } from "@/server/container/helpers";
-import type { IResultEntity } from "@/server/entities/result/DTO";
+import { v4 } from "uuid";
+import { env } from "@/server/lib/env";
 import type { IResult } from "./types";
 
 const prisma = new PrismaClient();
@@ -20,11 +20,11 @@ export const googleLensSearch = task({
             url: payload.imageUrl,
             type: payload.type || "all",
             safe: "off",
-            api_key: process.env.SERP_API_KEY!,
+            api_key: env.serpApi.apiKey,
         });
 
-        const resultsToCreate: IResultEntity[] = response.exact_matches.map((result: IResult) => ({
-            id: helpers.uid.generate(),
+        const resultsToCreate = response.exact_matches.map((result: IResult) => ({
+            id: v4(),
             searchId: payload.searchId,
             title: result.title,
             source: result.source,

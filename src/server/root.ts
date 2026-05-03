@@ -1,13 +1,15 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { auth } from "@/app/api/auth/[...nextauth]/auth";
-import { env } from "@/lib/env";
-import { prismaClient } from "@/lib/prisma";
+import { env } from "@/server/lib/env";
+import { prismaClient } from "@/server/lib/prisma";
+import { taskRegistry } from "@/server/lib/tasks";
 
 export const createTRPCContext = async () => {
     return {
         db: prismaClient,
         env,
+        tasks: taskRegistry,
     };
 };
 
