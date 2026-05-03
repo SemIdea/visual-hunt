@@ -3,6 +3,8 @@ import superjson from "superjson";
 import { auth } from "@/app/api/auth/[...nextauth]/auth";
 import { env } from "@/server/lib/env";
 import { prismaClient } from "@/server/lib/prisma";
+import { createServicesRegistry } from "@/server/lib/services";
+import { stripe } from "@/server/lib/stripe";
 import { taskRegistry } from "@/server/lib/tasks";
 
 export const createTRPCContext = async () => {
@@ -10,6 +12,7 @@ export const createTRPCContext = async () => {
         db: prismaClient,
         env,
         tasks: taskRegistry,
+        services: createServicesRegistry(stripe),
     };
 };
 
