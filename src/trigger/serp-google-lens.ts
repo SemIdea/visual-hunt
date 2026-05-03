@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client/edge";
-import { task } from "@trigger.dev/sdk/v3";
+import { task } from "@trigger.dev/sdk";
 import { getJson } from "serpapi";
 import { v4 } from "uuid";
 import { env } from "@/server/lib/env";

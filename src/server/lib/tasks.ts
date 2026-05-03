@@ -1,8 +1,8 @@
-import { tasks } from "@trigger.dev/sdk/v3";
+import { tasks } from "@trigger.dev/sdk";
 
 export const taskRegistry = {
     startSearch: {
-        trigger(payload: { imageUrl: string }) {
+        trigger(payload: { imageUrl: string; searchId: string }) {
             return tasks.trigger("start-search", payload);
         },
     },

@@ -1,5 +1,5 @@
 import { PrismaClient, SearchStatus } from "@prisma/client/edge";
-import { task } from "@trigger.dev/sdk/v3";
+import { task } from "@trigger.dev/sdk";
 import { helpers } from "@/server/container/helpers";
 import type { IResultEntity } from "@/server/entities/result/DTO";
 import type { IResult } from "./types";

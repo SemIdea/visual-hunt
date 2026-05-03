@@ -57,7 +57,16 @@
 
             "style": {
                 "useConst": "warn",
-                "noNonNullAssertion": "warn"
+                "noNonNullAssertion": "warn",
+                "noRestrictedImports": {
+                    "level": "error",
+                    "options": {
+                        "paths": {
+                            "@trigger.dev/sdk/v3": "Use @trigger.dev/sdk (v4). O sufixo /v3 não é necessário e pode causar confusão.",
+                            "zod/v3": "Use zod (v4) ou zod/v4. v3 não é permitido"
+                        }
+                    }
+                }
             },
 
             "a11y": {
