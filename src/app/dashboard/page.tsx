@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
-import { auth } from "../api/auth/[...nextauth]/auth";
+import { getServerAuth } from "@/lib/auth/server";
 import UserInfo from "./_components/header";
 import PlanUsage from "./_components/planUsage";
 import DashboardNavigationTabs from "./_components/tabs";
 
 const Page = async () => {
-    const session = await auth();
+    const session = await getServerAuth();
 
     if (!session) {
         redirect("/auth/login");

@@ -13,7 +13,7 @@ export const procedure_startSearch = protectedProcedure
             ctx,
             input: {
                 imageUrl: input.imageUrl,
-                userId: ctx.session.user.id,
+                userId: ctx.session.userId,
             },
         });
     });

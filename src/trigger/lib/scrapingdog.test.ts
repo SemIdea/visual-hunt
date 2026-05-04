@@ -13,8 +13,18 @@ describe("fetchScrapingDogResults", () => {
             status: 200,
             json: async () => ({
                 lens_results: [
-                    { title: "Result A", link: "https://a.com", source: "src_a", thumbnail: "https://a.com/thumb.jpg" },
-                    { title: "Result B", link: "https://b.com", source: "src_b", thumbnail: "https://b.com/thumb.jpg" },
+                    {
+                        title: "Result A",
+                        link: "https://a.com",
+                        source: "src_a",
+                        thumbnail: "https://a.com/thumb.jpg",
+                    },
+                    {
+                        title: "Result B",
+                        link: "https://b.com",
+                        source: "src_b",
+                        thumbnail: "https://b.com/thumb.jpg",
+                    },
                 ],
             }),
         });
@@ -69,9 +79,9 @@ describe("fetchScrapingDogResults", () => {
             json: async () => ({}),
         });
 
-        await expect(
-            fetchScrapingDogResults("https://img.com/photo.jpg", API_KEY),
-        ).rejects.toThrow(ScrapingDogError);
+        await expect(fetchScrapingDogResults("https://img.com/photo.jpg", API_KEY)).rejects.toThrow(
+            ScrapingDogError,
+        );
     });
 
     it("throws ScrapingDogError on rate limit (429)", async () => {
@@ -81,17 +91,17 @@ describe("fetchScrapingDogResults", () => {
             json: async () => ({}),
         });
 
-        await expect(
-            fetchScrapingDogResults("https://img.com/photo.jpg", API_KEY),
-        ).rejects.toThrow(ScrapingDogError);
+        await expect(fetchScrapingDogResults("https://img.com/photo.jpg", API_KEY)).rejects.toThrow(
+            ScrapingDogError,
+        );
     });
 
     it("throws ScrapingDogTimeoutError on abort", async () => {
         mockFetch.mockRejectedValueOnce(new DOMException("Aborted", "AbortError"));
 
-        await expect(
-            fetchScrapingDogResults("https://img.com/photo.jpg", API_KEY),
-        ).rejects.toThrow(ScrapingDogTimeoutError);
+        await expect(fetchScrapingDogResults("https://img.com/photo.jpg", API_KEY)).rejects.toThrow(
+            ScrapingDogTimeoutError,
+        );
     });
 
     it("handles missing fields gracefully", async () => {

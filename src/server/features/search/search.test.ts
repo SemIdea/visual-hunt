@@ -1,15 +1,31 @@
 import { describe, expect, it, vi } from "vitest";
-import { auth } from "@/app/api/auth/[...nextauth]/auth";
 
-vi.mock("@/app/api/auth/[...nextauth]/auth", () => ({
-    auth: vi.fn(),
-}));
 vi.mock("@/server/lib/stripe", () => ({
     stripe: {},
 }));
+
+vi.mock("@/server/lib/redis", () => ({
+    redis: {
+        get: vi.fn().mockResolvedValue(null),
+        set: vi.fn().mockResolvedValue("OK"),
+        del: vi.fn().mockResolvedValue(1),
+        incr: vi.fn().mockResolvedValue(1),
+        pexpire: vi.fn().mockResolvedValue(1),
+    },
+}));
+
+vi.mock("@/server/features/auth/domains/get-session-by-token", () => ({
+    domain_getSessionByToken: vi.fn(),
+}));
+
 vi.mock("@/server/lib/prisma", () => ({
     prismaClient: {
         search: { create: vi.fn().mockResolvedValue({ id: "search_mock" }) },
+        user: { findUnique: vi.fn().mockResolvedValue({ id: "test_user" }) },
+        session: {
+            findUnique: vi.fn().mockResolvedValue(null),
+            update: vi.fn().mockResolvedValue({}),
+        },
     },
 }));
 vi.mock("@/server/lib/tasks", () => ({
@@ -20,14 +36,20 @@ vi.mock("@/server/lib/tasks", () => ({
     },
 }));
 
-import { createCallerFactory, createTRPCContext } from "@/server/root";
 import { appRouter } from "@/server";
+import { domain_getSessionByToken } from "@/server/features/auth/domains/get-session-by-token";
+import { SessionStatus } from "@/server/features/auth/schemas";
+import { createCallerFactory, createTRPCContext } from "@/server/root";
+
+const mockHeaders = () =>
+    new Headers({
+        "user-agent": "Mozilla/5.0",
+        authorization: "Bearer test_token",
+    });
 
 describe("search.ping", () => {
     it("returns dbConnected, envLoaded, tasksReady, servicesReady", async () => {
-        vi.mocked(auth).mockResolvedValue(null);
-
-        const ctx = await createTRPCContext();
+        const ctx = await createTRPCContext({ headers: new Headers({ "user-agent": "test" }) });
         const caller = createCallerFactory(appRouter)(ctx);
 
         const result = await caller.search.ping();
@@ -41,12 +63,19 @@ describe("search.ping", () => {
 
 describe("search.startSearch", () => {
     it("triggers job and returns jobId, searchId, imageUrl", async () => {
-        vi.mocked(auth).mockResolvedValue({
-            user: { id: "test_user" },
-            expires: new Date(Date.now() + 86400000).toISOString(),
-        } as never);
+        vi.mocked(domain_getSessionByToken).mockResolvedValue({
+            session: {
+                id: "session_id",
+                userId: "test_user",
+                accessTokenExpiresAt: new Date(Date.now() + 86400000),
+                revokedAt: null,
+                userAgent: { browser: "test", engine: "test", os: "test" },
+                ip: "127.0.0.1",
+            },
+            status: SessionStatus.VALID,
+        });
 
-        const ctx = await createTRPCContext();
+        const ctx = await createTRPCContext({ headers: mockHeaders() });
         const caller = createCallerFactory(appRouter)(ctx);
 
         const result = await caller.search.startSearch({
@@ -59,27 +88,32 @@ describe("search.startSearch", () => {
     });
 
     it("rejects invalid URL", async () => {
-        vi.mocked(auth).mockResolvedValue({
-            user: { id: "test_user" },
-            expires: new Date(Date.now() + 86400000).toISOString(),
-        } as never);
+        vi.mocked(domain_getSessionByToken).mockResolvedValue({
+            session: {
+                id: "session_id",
+                userId: "test_user",
+                accessTokenExpiresAt: new Date(Date.now() + 86400000),
+                revokedAt: null,
+                userAgent: { browser: "test", engine: "test", os: "test" },
+                ip: "127.0.0.1",
+            },
+            status: SessionStatus.VALID,
+        });
 
-        const ctx = await createTRPCContext();
+        const ctx = await createTRPCContext({ headers: mockHeaders() });
         const caller = createCallerFactory(appRouter)(ctx);
 
-        await expect(
-            caller.search.startSearch({ imageUrl: "not-a-url" }),
-        ).rejects.toThrow();
+        await expect(caller.search.startSearch({ imageUrl: "not-a-url" })).rejects.toThrow();
     });
 
     it("rejects unauthenticated requests", async () => {
-        vi.mocked(auth).mockResolvedValue(null);
-
-        const ctx = await createTRPCContext();
+        const ctx = await createTRPCContext({
+            headers: new Headers({ "user-agent": "test" }),
+        });
         const caller = createCallerFactory(appRouter)(ctx);
 
         await expect(
             caller.search.startSearch({ imageUrl: "https://example.com/img.jpg" }),
-        ).rejects.toThrow("UNAUTHORIZED");
+        ).rejects.toThrow("Missing access token");
     });
 });

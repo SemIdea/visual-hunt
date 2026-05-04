@@ -1,41 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { plans } from "@/config/plans";
+import { useAuth } from "@/lib/auth/context";
 import PlanUsageSkeleton from "./skeleton";
 
 const PlanUsage = () => {
-    const { data } = useSession();
+    const { user, isLoading } = useAuth();
 
-    const user = data?.user;
-
+    if (isLoading) return <PlanUsageSkeleton />;
     if (!user) return <PlanUsageSkeleton />;
 
-    // 1. Get the user's current priceId from their subscription
     const currentPriceId = user.subscription?.stripePriceId;
 
-    // Handle case where user has no active subscription
     if (!currentPriceId) {
         return <p>You are currently on the free plan.</p>;
     }
 
-    // 2. Find the plan by checking both monthly and yearly IDs
     const planEntry = Object.entries(plans).find(
         ([, planDetails]) =>
             planDetails.cta.priceId.monthly === currentPriceId ||
             planDetails.cta.priceId.yearly === currentPriceId,
     );
 
-    // Handle case where the plan is not found in your config (e.g., a legacy plan)
     if (!planEntry) {
         return <p>{currentPriceId}You are on a custom or legacy plan.</p>;
     }
 
-    // 3. Extract the plan name and determine the interval
     const plan = planEntry[1];
 
     return (
@@ -59,7 +53,6 @@ const PlanUsage = () => {
                         </Link>
                     </div>
 
-                    {/* Credit Balance */}
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t pt-6">
                         <div className="space-y-1">
                             <p className="text-sm font-medium">Credit Balance</p>

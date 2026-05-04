@@ -1,15 +1,13 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/lib/auth/context";
 import type { ISearchEntity } from "@/server/entities/search/DTO";
 
 const DisplayImage = ({ search }: { search: ISearchEntity }) => {
-    const { data } = useSession();
-
-    const user = data?.user;
+    const { user } = useAuth();
 
     return (
         <div className="lg:sticky">

@@ -1,12 +1,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-const UnauthenticatedUser = ({
-    status,
-}: {
-    status: "loading" | "authenticated" | "unauthenticated";
-}) => {
-    if (status !== "unauthenticated") return null;
+const UnauthenticatedUser = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
+    if (isAuthenticated) return null;
 
     return (
         <Link href="/auth/login" prefetch={true}>

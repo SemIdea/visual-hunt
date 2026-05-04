@@ -1,17 +1,15 @@
 "use client";
 
-import type { User } from "next-auth";
-import { useSession } from "next-auth/react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/lib/auth/context";
 import HeaderSkeleton from "./skeleton";
 
 const UserInfo = () => {
-    const { data } = useSession();
+    const { user, isLoading } = useAuth();
 
-    const user = data?.user as User;
-
-    if (!data?.user) return <HeaderSkeleton />;
+    if (isLoading) return <HeaderSkeleton />;
+    if (!user) return <HeaderSkeleton />;
 
     return (
         <div className="flex items-center gap-4">

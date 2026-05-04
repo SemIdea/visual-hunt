@@ -1,54 +1,78 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { getProviders, signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Field, FieldDescription, FieldGroup } from "@/components/ui/field";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/lib/auth/context";
 
 const LoginForm = () => {
     const router = useRouter();
-    const { data: session } = useSession();
+    const { isAuthenticated, login, isLoading } = useAuth();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (session) {
+        if (isAuthenticated) {
             router.push("/");
         }
-    }, [session, router]);
+    }, [isAuthenticated, router]);
 
-    const [providers, setProviders] = useState<Awaited<ReturnType<typeof getProviders>> | null>(
-        null,
-    );
-
-    useEffect(() => {
-        (async () => {
-            const res = await getProviders();
-            setProviders(res);
-        })();
-    }, []);
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+        try {
+            await login(email, password);
+            router.push("/");
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Invalid email or password.");
+        }
+    };
 
     return (
-        <form>
-            <FieldGroup>
-                <Field>
-                    {providers &&
-                        Object.values(providers).map((provider) => (
-                            <Button
-                                key={provider.name}
-                                variant="outline"
-                                type="button"
-                                className="cursor-pointer"
-                                onClick={() => signIn(provider.id, { redirectTo: "/" })}
-                            >
-                                Login with {provider.name}
-                            </Button>
-                        ))}
-                    <FieldDescription className="text-center">
-                        Don&apos;t have an account? <a href="#">Sign up</a>
-                    </FieldDescription>
-                </Field>
-            </FieldGroup>
-        </form>
+        <div className="flex min-h-screen items-center justify-center">
+            <Card className="w-full max-w-sm">
+                <CardHeader>
+                    <CardTitle>Login</CardTitle>
+                    <CardDescription>Sign in to your account</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="email">Email</Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="you@example.com"
+                                required
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="password">Password</Label>
+                            <Input
+                                id="password"
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="••••••••"
+                                required
+                                minLength={8}
+                                maxLength={128}
+                            />
+                        </div>
+                        {error && <p className="text-sm text-red-500">{error}</p>}
+                        <Button type="submit" className="w-full" disabled={isLoading}>
+                            {isLoading ? "Signing in..." : "Sign in"}
+                        </Button>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
     );
 };
 

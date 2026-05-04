@@ -104,13 +104,13 @@ const UploadTab = () => {
         e.stopPropagation();
         setDragActive(false);
         const files = e.dataTransfer?.files;
-        if (files && files[0]) {
+        if (files?.[0]) {
             uploadAndSearchFile(files[0]);
         }
     };
 
     const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
+        if (e.target.files?.[0]) {
             uploadAndSearchFile(e.target.files[0]);
         }
     };

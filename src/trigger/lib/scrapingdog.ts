@@ -46,12 +46,14 @@ export async function fetchScrapingDogResults(
             );
         }
 
-        const data = await response.json() as { lens_results?: Array<{
-            title?: string;
-            link?: string;
-            source?: string;
-            thumbnail?: string;
-        }> };
+        const data = (await response.json()) as {
+            lens_results?: Array<{
+                title?: string;
+                link?: string;
+                source?: string;
+                thumbnail?: string;
+            }>;
+        };
 
         if (!data.lens_results?.length) {
             return [];

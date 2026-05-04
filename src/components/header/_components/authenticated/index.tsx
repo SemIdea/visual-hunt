@@ -1,6 +1,5 @@
 import { CreditCard, LayoutDashboard, LogOut, User } from "lucide-react";
 import Link from "next/link";
-import type { User as AuthUser } from "next-auth";
 import UserAvatar from "@/components/avatar";
 import {
     DropdownMenu,
@@ -11,17 +10,18 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "@/components/ui/modetoggle";
+import type { AuthUser } from "@/lib/auth/types";
 
 const AuthenticatedUser = ({
     user,
     signOut,
-    status,
+    isAuthenticated,
 }: {
-    user: AuthUser | undefined;
+    user: AuthUser | null;
     signOut: () => Promise<void>;
-    status: "loading" | "authenticated" | "unauthenticated";
+    isAuthenticated: boolean;
 }) => {
-    if (status !== "authenticated" || !user) return null;
+    if (!isAuthenticated || !user) return null;
 
     return (
         <DropdownMenu modal={false}>

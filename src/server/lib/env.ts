@@ -1,3 +1,5 @@
+import ms from "ms";
+
 export const env = {
     publicUrl: process.env.NEXT_PUBLIC_URL || "http://localhost:3000",
 
@@ -7,15 +9,31 @@ export const env = {
     },
 
     auth: {
-        nextAuthSecret: process.env.NEXTAUTH_SECRET || "",
-        nextAuthUrl: process.env.NEXTAUTH_URL || "",
-        github: {
-            clientId: process.env.GITHUB_ID || "",
-            clientSecret: process.env.GITHUB_SECRET || "",
+        session: {
+            accessSecret: process.env.AUTH_SESSION_ACCESS_SECRET || "accessSecret",
+            refreshSecret: process.env.AUTH_SESSION_REFRESH_SECRET || "refreshSecret",
+            token: {
+                byteLength: Number(process.env.AUTH_TOKEN_BYTE_LENGTH) || 32,
+                expire: {
+                    accessToken: ms((process.env.AUTH_ACCESS_TOKEN_TTL || "15m") as ms.StringValue),
+                    refreshToken: ms(
+                        (process.env.AUTH_REFRESH_TOKEN_TTL || "7d") as ms.StringValue,
+                    ),
+                },
+            },
+            cache: {
+                ttl: ms((process.env.AUTH_SESSION_CACHE_TTL || "5m") as ms.StringValue),
+                sessionKeyPrefix: process.env.AUTH_SESSION_CACHE_KEY_PREFIX || "session:",
+            },
         },
-        google: {
-            clientId: process.env.GOOGLE_ID || "",
-            clientSecret: process.env.GOOGLE_SECRET || "",
+        user: {
+            bcrypt: {
+                cost: Number(process.env.AUTH_USER_BCRYPT_COST) || 12,
+            },
+        },
+        rateLimit: {
+            maxRequests: Number(process.env.AUTH_RATE_LIMIT_MAX) || 10,
+            windowMs: ms((process.env.AUTH_RATE_LIMIT_WINDOW_MS || "15s") as ms.StringValue),
         },
     },
 

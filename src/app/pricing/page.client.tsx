@@ -2,13 +2,13 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { createContext, type ReactNode, useContext, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { useAuth } from "@/lib/auth/context";
 import { useTRPC } from "@/lib/trpc/client";
 
 type CheckoutInput = { priceId: string };
@@ -99,7 +99,7 @@ const BasicPlanFooter = ({
     };
 }) => {
     const { createCheckoutSession, router, isYearly } = usePricing();
-    const { data: session } = useSession();
+    const { isAuthenticated } = useAuth();
 
     return (
         <CardFooter>
@@ -107,7 +107,7 @@ const BasicPlanFooter = ({
                 variant="outline"
                 className="w-full bg-transparent"
                 onClick={() => {
-                    if (session) {
+                    if (isAuthenticated) {
                         createCheckoutSession({
                             priceId: isYearly ? priceId.yearly : priceId.monthly,
                         });

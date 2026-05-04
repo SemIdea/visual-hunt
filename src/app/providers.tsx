@@ -1,8 +1,8 @@
 "use client";
 
-import { SessionProvider } from "next-auth/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import type { ComponentProps, ReactNode } from "react";
+import { AuthProvider } from "@/lib/auth/context";
 import { TRPCReactProvider } from "@/lib/trpc/client";
 
 type ProvidersProps = {
@@ -11,11 +11,11 @@ type ProvidersProps = {
 
 function Providers({ children, ...themeProps }: ProvidersProps): ReactNode {
     return (
-        <SessionProvider refetchOnWindowFocus={false} refetchInterval={0}>
-            <TRPCReactProvider>
+        <TRPCReactProvider>
+            <AuthProvider>
                 <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
-            </TRPCReactProvider>
-        </SessionProvider>
+            </AuthProvider>
+        </TRPCReactProvider>
     );
 }
 

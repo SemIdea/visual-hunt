@@ -2,13 +2,13 @@
 
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import { useAuth } from "@/lib/auth/context";
 import AuthenticatedUser from "./_components/authenticated";
 import LoadingUser from "./_components/loading";
 import UnauthenticatedUser from "./_components/unauthenticated";
 
 const Header = () => {
-    const { data, status } = useSession();
+    const { user, logout, isAuthenticated, isLoading } = useAuth();
 
     return (
         <header className="fixed z-10 w-full border-b border-border/40 bg-background/40 backdrop-blur-sm">
@@ -40,9 +40,13 @@ const Header = () => {
                 </div>
 
                 <nav className="flex items-center gap-3">
-                    <LoadingUser status={status} />
-                    <UnauthenticatedUser status={status} />
-                    <AuthenticatedUser user={data?.user} signOut={signOut} status={status} />
+                    <LoadingUser isLoading={isLoading} />
+                    <UnauthenticatedUser isAuthenticated={isAuthenticated} />
+                    <AuthenticatedUser
+                        user={user}
+                        signOut={logout}
+                        isAuthenticated={isAuthenticated}
+                    />
                 </nav>
             </div>
         </header>

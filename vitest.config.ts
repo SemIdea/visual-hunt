@@ -9,10 +9,5 @@ export default defineConfig({
     },
     test: {
         include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
-        server: {
-            deps: {
-                inline: ["next-auth"],
-            },
-        },
     },
 });
