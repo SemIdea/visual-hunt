@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -69,6 +70,12 @@ const LoginForm = () => {
                         <Button type="submit" className="w-full" disabled={isLoading}>
                             {isLoading ? "Signing in..." : "Sign in"}
                         </Button>
+                        <p className="text-sm text-center text-muted-foreground">
+                            Don&apos;t have an account?{" "}
+                            <Link href="/auth/register" className="underline underline-offset-2 hover:text-primary">
+                                Create one
+                            </Link>
+                        </p>
                     </form>
                 </CardContent>
             </Card>

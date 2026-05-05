@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 const CTA = () => {
@@ -8,9 +9,11 @@ const CTA = () => {
                 <p className="mb-8 text-lg text-muted-foreground">
                     Sign up for a free account to get more searches and save your history.
                 </p>
-                <Button size="lg" className="text-base">
-                    Sign Up for Free
-                </Button>
+                <Link href="/auth/register">
+                    <Button size="lg" className="text-base">
+                        Sign Up for Free
+                    </Button>
+                </Link>
             </div>
         </section>
     );
