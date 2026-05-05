@@ -6,6 +6,8 @@
 - Names: specific and unique. Avoid `data`, `handler`, `Manager`.
   Prefer names that return <5 grep hits in the codebase.
 - Types: explicit. No `any`, no `Dict`, no untyped functions.
+- Zod: use v4 APIs exclusively (`z.email()`, `z.uuid()`, etc.).
+  Never use deprecated v3 chained methods (`z.string().email()`, `z.string().uuid()`).
 - No code duplication. Extract shared logic into a function/module.
 - Early returns over nested ifs. Max 2 levels of indentation.
 - Exception messages must include the offending value and expected shape.

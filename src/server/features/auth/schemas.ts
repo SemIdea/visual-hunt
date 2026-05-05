@@ -33,8 +33,8 @@ export const UserAgentSchema = z.object({
 export type IUserAgent = z.infer<typeof UserAgentSchema>;
 
 export const sessionSchema = z.object({
-    id: z.string().uuid(),
-    userId: z.string().uuid(),
+    id: z.uuid(),
+    userId: z.uuid(),
     accessTokenExpiresAt: z.coerce.date(),
     revokedAt: z.coerce.date().nullable(),
     userAgent: UserAgentSchema,
@@ -52,7 +52,13 @@ export enum SessionStatus {
 }
 
 export const loginInputSchema = z.object({
-    email: z.string().email().max(255).trim().toLowerCase(),
+    email: z.email().max(255).trim().toLowerCase(),
+    password: z.string().min(8).max(128),
+});
+
+export const registerInputSchema = z.object({
+    name: z.string().min(1).max(100),
+    email: z.email().max(255).trim().toLowerCase(),
     password: z.string().min(8).max(128),
 });
 
