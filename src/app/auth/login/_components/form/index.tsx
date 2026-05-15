@@ -27,7 +27,7 @@ const LoginForm = () => {
         setError(null);
         try {
             await login(email, password);
-            router.push("/");
+            router.push("/dashboard");
         } catch (err) {
             setError(err instanceof Error ? err.message : "Invalid email or password.");
         }

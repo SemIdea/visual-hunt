@@ -32,7 +32,7 @@ const RegisterForm = () => {
             onSuccess: (data) => {
                 setAccessToken(data.result.accessToken);
                 queryClient.invalidateQueries({ queryKey: trpc.auth.me.queryKey() });
-                router.push("/");
+                router.push("/dashboard");
             },
             onError: (err) => {
                 if (err.data?.code === "CONFLICT") {

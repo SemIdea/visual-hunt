@@ -10,16 +10,16 @@ O registro de usuário já foi implementado no servidor e no cliente. Este arqui
 - `src/server/features/auth/router.ts` registra login, register, logout, refresh e me.
 - `src/app/auth/register/page.tsx` renderiza o fluxo de registro.
 - `src/app/auth/register/_components/form/index.tsx` chama `trpc.auth.register`.
+- Registro e login redirecionam para `/dashboard` após sucesso.
 - Header unauthenticated tem entrada para registro.
 - Testes unitários cobrem domínios principais de auth.
+- Há teste de procedure para `auth.register`.
 
 ## Pendências
 
-- [ ] Revisar UX pós-registro: hoje o app redireciona para `/`; decidir se deve ir para `/dashboard`.
-- [ ] Padronizar mensagens em português ou inglês no fluxo auth inteiro.
 - [ ] Definir política de verificação de email antes de produção.
 - [ ] Definir política de rotação/revogação global de sessões.
-- [ ] Adicionar teste de procedure/router para `auth.register`, não só domain.
+- [ ] Decidir se o fluxo inteiro de auth deve permanecer em inglês ou virar português antes de lançar.
 
 ## Riscos Relacionados
 
