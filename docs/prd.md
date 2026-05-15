@@ -150,4 +150,4 @@ Proposta de valor em uma frase: *"Faça uma busca reversa uma vez e acompanhe re
 
 ---
 
-Estado vivo em `docs/ust.md` (stories), `docs/ach.md` (arquitetura), `docs/BUGS.md` (riscos conhecidos) e `docs/adr/` (decisões).
+Estado vivo em `docs/ust.md` (stories), `docs/ach.md` (arquitetura), `docs/todos/BUGS.md` (riscos conhecidos) e `docs/adr/` (decisões).

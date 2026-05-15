@@ -16,7 +16,7 @@ Se este doc divergir do código atual, confira `docs/ach.md` e registre ajuste e
 - **TDD proporcional ao risco:** bug novo pede teste que reproduz; feature nova pede teste do comportamento central; mudança visual simples pode ficar em type-check/lint quando não há regra de negócio.
 - **Tracer bullets:** entregar fluxo fim-a-fim fino antes de engrossar casos especiais.
 - **KISS/YAGNI:** preferir solução pequena e local; abstração só quando o terceiro caller confirmar padrão.
-- **Broken windows:** build, type-check, audit ou teste quebrado vira correção imediata ou item explícito em `docs/BUGS.md`.
+- **Broken windows:** build, type-check, audit ou teste quebrado vira correção imediata ou item explícito em `docs/todos/BUGS.md`.
 - **Segurança não é escopo opcional:** tokens, senhas, secrets e URLs sensíveis não entram em log.
 - **Postgres é fonte de verdade:** Redis/cache/Trigger run não substituem estado persistido.
 - **Tasks são idempotentes:** retry de Trigger.dev não duplica resultado nem corrompe status.
@@ -46,7 +46,7 @@ Se este doc divergir do código atual, confira `docs/ach.md` e registre ajuste e
    Verificação: `npm run build`.
 
 4. **Não deixar vulnerabilidade acionável sem decisão.**
-   Verificação: `npm audit`. Se não corrigir, registrar em `docs/BUGS.md` com severidade e motivo.
+   Verificação: `npm audit`. Se não corrigir, registrar em `docs/todos/BUGS.md` com severidade e motivo.
 
 5. **Boundary valida input com Zod.**
    Procedures tRPC, webhook payloads e env parsing validam entrada antes de domain.
@@ -93,7 +93,7 @@ Se este doc divergir do código atual, confira `docs/ach.md` e registre ajuste e
 1. Reproduzir em teste quando for regra de negócio, task, auth, billing ou parsing.
 2. Implementar fix mínimo.
 3. Rodar teste afetado, `npx tsc --noEmit` e lint quando tocar TS/React.
-4. Atualizar `docs/BUGS.md` se o risco permanecer.
+4. Atualizar `docs/todos/BUGS.md` se o risco permanecer.
 
 ### Feature nova
 
@@ -125,7 +125,7 @@ Se este doc divergir do código atual, confira `docs/ach.md` e registre ajuste e
 - [ ] `npx tsc --noEmit` passa.
 - [ ] `npm run lint` passa sem warnings novos relevantes.
 - [ ] `npm run build` passa quando mudança toca app, server, deps, Prisma ou Trigger.
-- [ ] `npm audit` passa ou risco está em `docs/BUGS.md`.
+- [ ] `npm audit` passa ou risco está em `docs/todos/BUGS.md`.
 - [ ] Nenhum secret/token/senha foi logado.
 - [ ] Docs foram reconciliados quando escopo, arquitetura ou risco mudou.
 
