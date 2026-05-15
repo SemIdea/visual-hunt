@@ -1,5 +1,8 @@
 # IDEA.md — Visual Hunt
 
+> Referência histórica da ideia original. O contrato atual do produto vive em `docs/prd.md`.
+> Diferença relevante: a v1 atual exige autenticação para busca visual, conforme ADR-0002.
+
 ## O Problema
 
 Profissionais e entusiastas de OSINT precisam rastrear a origem
