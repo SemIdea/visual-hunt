@@ -50,8 +50,25 @@
 - Structured JSON when logging for debugging / observability.
 - Plain text only for user-facing CLI output.
 
+## AFM
+
+- Canonical process lives in `docs/afm.md`.
+- Use `docs/prd.md` for product scope, `docs/ust.md` for user stories,
+  `docs/ach.md` for architecture, `docs/gotchas.md` for known traps,
+  and `docs/adr/` for architectural decisions.
+- Default loop: read the relevant docs first, understand the change in 2
+  sentences, write or update a test for behavior changes, implement the
+  smallest fix, refactor only after green, then validate with
+  `npm test`, `npx tsc --noEmit`, `npm run lint`, `npm run build`, and
+  `npm audit` when the change touches runtime or dependencies.
+- Keep tasks small. If a change crosses boundaries or alters contracts,
+  document the decision in an ADR before or alongside the code change.
+- Prefer the existing stack and folder layout in this repo:
+  Next.js App Router, tRPC, Prisma/Postgres, Redis, Stripe, Cloudinary,
+  and Trigger.dev.
+
 ## Project Context
 
-Read `docs/IDEA.md` before making any changes. It describes what
-this project is, who it's for, and what is explicitly out of scope.
-When in doubt about a feature or direction, consult IDEA.md first.
+Read `docs/IDEA.md` for historical context, then `docs/prd.md` and
+`docs/ust.md` for the current product contract. When in doubt about a
+feature or direction, consult `docs/ach.md` and `docs/afm.md` first.
