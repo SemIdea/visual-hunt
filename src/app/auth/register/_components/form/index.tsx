@@ -1,15 +1,15 @@
 "use client";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useTRPC } from "@/lib/trpc/client";
 import { useAuth } from "@/lib/auth/context";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { setAccessToken } from "@/lib/auth/storage";
+import { useTRPC } from "@/lib/trpc/client";
 
 const RegisterForm = () => {
     const router = useRouter();
