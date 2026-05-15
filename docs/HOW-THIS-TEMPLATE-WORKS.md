@@ -11,7 +11,7 @@ Este diretório nasceu de um template AFM, mas foi adaptado para o projeto real 
 | `ach.md` | Guia de arquitetura: onde colocar código e como as camadas conversam. |
 | `afm.md` | Método de trabalho: fluxo, regras duras, Definition of Done. |
 | `gotchas.md` | Surpresas operacionais já conhecidas. |
-| `BUGS.md` | Riscos e problemas conhecidos que ainda não foram resolvidos. |
+| `todos/BUGS.md` | Riscos e problemas conhecidos que ainda não foram resolvidos. |
 | `adr/` | Decisões arquiteturais versionadas. |
 | `IDEA.md` | Ideia original do produto; referência histórica, não contrato atual. |
 
@@ -21,7 +21,7 @@ Este diretório nasceu de um template AFM, mas foi adaptado para o projeto real 
 2. Antes de mexer em camadas, confira `ach.md`.
 3. Antes de tocar Trigger, Prisma, Stripe, Redis ou Cloudinary, confira `gotchas.md`.
 4. Se a mudança alterar contrato entre camadas, crie uma ADR.
-5. Se encontrar bug que não vai resolver agora, registre em `BUGS.md`.
+5. Se encontrar bug que não vai resolver agora, registre em `docs/todos/BUGS.md`.
 6. Ao fechar a tarefa, rode o checklist de `afm.md`.
 
 ## O Que Não Fazer
@@ -29,7 +29,7 @@ Este diretório nasceu de um template AFM, mas foi adaptado para o projeto real 
 - Não recriar `src/modules/*` ou Express controllers por causa do template antigo.
 - Não usar `IDEA.md` para contradizer `prd.md`; primeiro atualize o PRD.
 - Não esconder decisão arquitetural em commit de código; use ADR.
-- Não deixar TODO solto em comentário se ele representa risco de produto; use `BUGS.md` ou `ust.md`.
+- Não deixar TODO solto em comentário se ele representa risco de produto; use `docs/todos/BUGS.md` ou `ust.md`.
 
 ## Fluxo Recomendado para Próximas Mudanças
 
@@ -41,7 +41,7 @@ docs/prd.md -> docs/ust.md -> docs/ach.md -> docs/gotchas.md
 teste/type-check -> código -> refactor -> validação
 
 # reconciliar
-docs/BUGS.md ou docs/adr/ quando necessário
+docs/todos/BUGS.md ou docs/adr/ quando necessário
 ```
 
 Este arquivo é um guia de navegação. O contrato técnico detalhado fica em `ach.md` e `afm.md`.
