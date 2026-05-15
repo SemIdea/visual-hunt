@@ -45,9 +45,15 @@ NEXT_PUBLIC_CLOUDINARY_API_KEY=
 
 ```bash
 npm install
-npm exec prisma generate
-npm exec prisma db push
+npm run prisma:generate
+npm run prisma:migrate:dev
 npm run dev
+```
+
+Se você quiser inspecionar ou ajustar o schema durante o desenvolvimento:
+
+```bash
+npm run prisma:studio
 ```
 
 Em outro terminal, rode o worker do Trigger quando precisar processar buscas:
