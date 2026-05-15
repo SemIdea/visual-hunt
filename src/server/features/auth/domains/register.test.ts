@@ -1,4 +1,3 @@
-import { TRPCError } from "@trpc/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { TRPCContext } from "@/server/root";
 
@@ -23,7 +22,7 @@ const mockCreate = vi.fn();
 const makeCtx = (overrides: Partial<TRPCContext> = {}): TRPCContext =>
     ({
         db: { user: { findUnique: mockFindUnique, create: mockCreate } },
-        env: { AUTH_USER_BCRYPT_COST: 12 },
+        env: { auth: { user: { bcrypt: { cost: 12 } } } },
         device: {
             ip: "192.168.1.1",
             userAgent: { browser: "Chrome", engine: "Blink", os: "Linux" },
@@ -56,10 +55,17 @@ describe("domain_register", () => {
         });
 
         expect(result).toEqual({ accessToken: "at", refreshToken: "rt", expiresIn: 900 });
-        expect(mockFindUnique).toHaveBeenCalledWith({ where: { email: "test@test.com" }, select: { id: true } });
+        expect(mockFindUnique).toHaveBeenCalledWith({
+            where: { email: "test@test.com" },
+            select: { id: true },
+        });
         expect(mockHashPassword).toHaveBeenCalledWith("password123", 12);
         expect(mockCreate).toHaveBeenCalledWith({
-            data: { name: "Test User", email: "test@test.com", passwordHash: "$2b$12$hashedpassword" },
+            data: {
+                name: "Test User",
+                email: "test@test.com",
+                passwordHash: "$2b$12$hashedpassword",
+            },
         });
         expect(mockCreateSession).toHaveBeenCalledWith({
             ctx: expect.anything(),

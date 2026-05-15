@@ -3,8 +3,15 @@ import { env } from "@/server/lib/env";
 
 const globalForRedis = globalThis as unknown as { redis: Redis | undefined };
 
-export const redis = globalForRedis.redis ?? new Redis(env.database.redis.url);
+export const getRedis = () => {
+    globalForRedis.redis ??= new Redis(env.database.redis.url);
+    return globalForRedis.redis;
+};
 
-if (process.env.NODE_ENV !== "production") {
-    globalForRedis.redis = redis;
-}
+export const redis = new Proxy({} as Redis, {
+    get(_target, prop) {
+        const client = getRedis();
+        const value = client[prop as keyof Redis];
+        return typeof value === "function" ? value.bind(client) : value;
+    },
+});
