@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { ACCESS_TOKEN_COOKIE_NAME } from "@/lib/auth/constants";
 import type { IUserAgent } from "@/server/features/auth/schemas";
 import { UserAgentSchema } from "@/server/features/auth/schemas";
 
@@ -33,6 +34,14 @@ export const parseHeaders = (headers: Headers): Device => {
 export const extractBearerToken = (headers: Headers): string | null => {
     const auth = headers.get("authorization");
     const [type, token] = auth?.split(" ") ?? [];
-    if (type !== "Bearer" || !token) return null;
-    return token;
+    if (type === "Bearer" && token) return token;
+
+    const cookie = headers.get("cookie");
+    const cookieToken = cookie
+        ?.split(";")
+        .map((entry) => entry.trim())
+        .find((entry) => entry.startsWith(`${ACCESS_TOKEN_COOKIE_NAME}=`))
+        ?.slice(ACCESS_TOKEN_COOKIE_NAME.length + 1);
+
+    return cookieToken ? decodeURIComponent(cookieToken) : null;
 };

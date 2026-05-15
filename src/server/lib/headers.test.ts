@@ -12,6 +12,21 @@ describe("extractBearerToken", () => {
         expect(extractBearerToken(headers)).toBeNull();
     });
 
+    it("returns token from auth cookie when Authorization header is missing", () => {
+        const headers = new Headers({
+            cookie: "other=value; vh_access_token=cookie_token_123",
+        });
+        expect(extractBearerToken(headers)).toBe("cookie_token_123");
+    });
+
+    it("prefers Authorization header over auth cookie", () => {
+        const headers = new Headers({
+            authorization: "Bearer header_token_123",
+            cookie: "vh_access_token=cookie_token_123",
+        });
+        expect(extractBearerToken(headers)).toBe("header_token_123");
+    });
+
     it("returns null when Authorization is not Bearer", () => {
         const headers = new Headers({ authorization: "Basic dXNlcjpwYXNz" });
         expect(extractBearerToken(headers)).toBeNull();
