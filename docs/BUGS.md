@@ -1,16 +1,22 @@
 # Bugs e Riscos Conhecidos
 
-## Critico
+## Status
 
-- **Fluxo de busca duplicado historicamente**: ainda existem nomes de compatibilidade (`searchWithUrl`, `readSearchWithResults`) junto do fluxo novo `startSearch`. A implementacao foi alinhada para usar a task `start-search`, mas o produto deveria escolher um contrato publico unico depois.
-- **Search exige usuario autenticado**: buscas criam registros vinculados ao usuario. A home agora redireciona para login quando nao ha sessao, mas ainda falta uma decisao de produto sobre busca anonima.
+Não há bug crítico conhecido aberto neste momento.
 
-## Alto
+## Riscos Monitorados
 
-- **Trigger.dev v4 depende de overrides de seguranca transitivos**: o audit esta limpo com overrides para `cookie` e `systeminformation`, mas uma atualizacao oficial do Trigger deve ser revisada quando houver release que resolva isso sem override.
-- **Docker de producao nao executa migracoes**: o container nao roda `prisma db push` no start. Isso evita mutacao automatica em producao, mas exige pipeline de migracao separado.
+- **Trigger.dev v4 depende de overrides de segurança transitivos:** `npm audit` deve continuar limpo após qualquer atualização de dependência. Detalhe operacional em `docs/gotchas.md`.
+- **Provider externo único no MVP:** Google Lens/ScrapingDog é o primeiro provider. Multi-provider está modelado como US-006 em `docs/ust.md`.
+- **Status por provider ainda não existe:** quando US-006 avançar, avaliar model próprio para status parcial por provider.
+- **Busca pública/compartilhável não existe:** ADR-0002 define busca autenticada. Compartilhamento público futuro exige token próprio, expiração e decisão de privacidade.
 
-## Medio
+## Resolvidos
 
-- **README ainda nao cobre todos os fluxos externos**: ha envs documentadas, mas faltam instrucoes operacionais detalhadas para webhooks Stripe, Trigger deploy e presets Cloudinary.
-- **Upload via URL passa pelo Cloudinary antes da busca**: isso padroniza a entrada para a task, mas pode falhar para URLs remotas que o Cloudinary nao consiga importar.
+- **Log de credenciais no registro:** removido de `src/app/auth/register/_components/form/index.tsx`.
+- **Aliases legados de busca:** removidos `searchWithUrl` e `readSearchWithResults`; UI usa `startSearch` e `getSearch`.
+- **Leitura de busca por ID público:** `getSearch` agora exige sessão e filtra por `userId`.
+- **Server caller sem sessão por cookie:** headers agora leem `vh_access_token` do cookie quando não há `Authorization`.
+- **Falha de upload Cloudinary sem feedback:** upload da home agora captura erro e mostra mensagem antes de iniciar busca.
+- **Docker produção sem migração:** target de produção roda `prisma migrate deploy` antes de `npm start`.
+- **README incompleto para integrações externas:** runbooks mínimos de Stripe, Trigger.dev, Cloudinary e ScrapingDog foram adicionados.
