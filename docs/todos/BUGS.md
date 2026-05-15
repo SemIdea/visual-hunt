@@ -6,7 +6,6 @@ Não há bug crítico conhecido aberto neste momento.
 
 ## Riscos Monitorados
 
-- **Trigger.dev v4 depende de overrides de segurança transitivos:** `npm audit` deve continuar limpo após qualquer atualização de dependência. Detalhe operacional em `docs/gotchas.md`.
 - **Provider externo único no MVP:** Google Lens/ScrapingDog é o primeiro provider. Multi-provider está modelado como US-006 em `docs/ust.md`.
 - **Status por provider ainda não existe:** quando US-006 avançar, avaliar model próprio para status parcial por provider.
 - **Busca pública/compartilhável não existe:** ADR-0002 define busca autenticada. Compartilhamento público futuro exige token próprio, expiração e decisão de privacidade.
@@ -20,3 +19,4 @@ Não há bug crítico conhecido aberto neste momento.
 - **Falha de upload Cloudinary sem feedback:** upload da home agora captura erro e mostra mensagem antes de iniciar busca.
 - **Docker produção sem migração:** target de produção roda `prisma migrate deploy` antes de `npm start`.
 - **README incompleto para integrações externas:** runbooks mínimos de Stripe, Trigger.dev, Cloudinary e ScrapingDog foram adicionados.
+- **Trigger.dev audit drift:** overrides necessários foram restaurados e `npm audit` voltou a ficar limpo.
