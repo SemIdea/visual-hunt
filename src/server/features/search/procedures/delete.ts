@@ -13,7 +13,7 @@ export const procedure_deleteSearch = protectedProcedure
             ctx,
             input: {
                 id: input.id,
-                userId: ctx.session?.user?.id ?? "",
+                userId: ctx.session.userId,
             },
         });
     });

@@ -25,6 +25,7 @@ describe("domain_startSearch", () => {
         const ctx = {
             tasks: {
                 startSearch: { trigger: mockTrigger },
+                createPublicToken: vi.fn().mockResolvedValue("public_token"),
             },
             db: {
                 search: { create: mockSearchCreate },
@@ -54,7 +55,7 @@ describe("domain_startSearch", () => {
                 userId: "user_1",
                 status: "PENDING",
                 jobId: "job_123",
-                publicAccessToken: "",
+                publicAccessToken: "public_token",
             },
         });
         expect(typeof createArg.data.id).toBe("string");
@@ -62,5 +63,6 @@ describe("domain_startSearch", () => {
         expect(result).toHaveProperty("jobId", "job_123");
         expect(result).toHaveProperty("searchId", "search_uuid");
         expect(result).toHaveProperty("imageUrl", "https://example.com/img.jpg");
+        expect(result).toHaveProperty("publicAccessToken", "public_token");
     });
 });
