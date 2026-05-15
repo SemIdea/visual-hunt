@@ -47,7 +47,6 @@ const RegisterForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
-        console.log(name, email, password);
         registerMutation.mutate({ name, email, password });
     };
 
