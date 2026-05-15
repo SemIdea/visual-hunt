@@ -6,7 +6,7 @@ import { SearchHistory } from "./index.client";
 const SearchHistoryTab = async () => {
     const caller = await createCaller();
 
-    const searches = await caller.search.readSearchHistory();
+    const searches = await caller.search.getSearchHistory();
 
     return (
         <Card>

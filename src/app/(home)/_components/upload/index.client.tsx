@@ -26,12 +26,15 @@ export const uploadFile = async (file: File | string): Promise<string> => {
         method: "POST",
         body: formData,
     });
-    const data = await response.json();
-    if (response.ok) {
+    const data = (await response.json()) as {
+        secure_url?: string;
+        error?: { message?: string };
+    };
+    if (response.ok && data.secure_url) {
         return data.secure_url;
-    } else {
-        throw new Error(data.error.message);
     }
+
+    throw new Error(data.error?.message ?? "Unable to upload image.");
 };
 
 const useUploadImage = () => {
@@ -40,70 +43,98 @@ const useUploadImage = () => {
     const { isAuthenticated } = useAuth();
     const [imageUrl, setImageUrl] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const { mutate: search } = useMutation(
-        trpc.search.searchWithUrl.mutationOptions({
+        trpc.search.startSearch.mutationOptions({
             onSuccess: (data) => {
                 setIsLoading(false);
-                router.push(`/search/${data.id}`);
+                router.push(`/search/${data.searchId}`);
             },
-            onError: () => {
+            onError: (err) => {
+                setError(err.message);
                 setIsLoading(false);
             },
         }),
     );
 
+    const ensureAuthenticated = useCallback(() => {
+        if (isAuthenticated) return true;
+        router.push("/auth/login");
+        return false;
+    }, [isAuthenticated, router]);
+
     const startSearch = useCallback(
         (url: string) => {
             if (!url) return;
-            if (!isAuthenticated) {
-                router.push("/auth/login");
-                return;
-            }
+            if (!ensureAuthenticated()) return;
 
+            setError(null);
             setIsLoading(true);
-            search({ url });
+            search({ imageUrl: url });
         },
-        [isAuthenticated, router, search],
+        [ensureAuthenticated, search],
+    );
+
+    const uploadAndSearch = useCallback(
+        async (file: File | string) => {
+            if (!ensureAuthenticated()) return;
+
+            setError(null);
+            setIsLoading(true);
+
+            try {
+                const safeUrl = await uploadFile(file);
+                setImageUrl(safeUrl);
+                search({ imageUrl: safeUrl });
+            } catch (err) {
+                setError(err instanceof Error ? err.message : "Unable to upload image.");
+                setIsLoading(false);
+            }
+        },
+        [ensureAuthenticated, search],
     );
 
     const handleSubmit = useCallback(async () => {
         if (!imageUrl) return;
-        const safeUrl = await uploadFile(imageUrl);
-        startSearch(safeUrl);
-    }, [imageUrl, startSearch]);
+        await uploadAndSearch(imageUrl);
+    }, [imageUrl, uploadAndSearch]);
 
     return {
+        error,
         imageUrl,
         isLoading,
-        setIsLoading,
         setImageUrl,
         handleSubmit,
         startSearch,
+        uploadAndSearch,
     };
 };
 
 const UrlTab = () => {
-    const { imageUrl, isLoading, setImageUrl, handleSubmit } = useUploadImage();
+    const { error, imageUrl, isLoading, setImageUrl, handleSubmit } = useUploadImage();
 
     return (
-        <div className="flex gap-2">
-            <Input
-                placeholder="Paste image or video URL..."
-                className="flex-1"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-            />
-            <Button className="gap-2" onClick={handleSubmit} disabled={isLoading}>
-                {isLoading ? <Spinner /> : <Search />}
-                Search
-            </Button>
+        <div className="space-y-2">
+            <div className="flex gap-2">
+                <Input
+                    placeholder="Paste image or video URL..."
+                    className="flex-1"
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                />
+                <Button className="gap-2" onClick={handleSubmit} disabled={isLoading}>
+                    {isLoading ? <Spinner /> : <Search />}
+                    Search
+                </Button>
+            </div>
+            {error ? <p className="text-sm text-red-500">{error}</p> : null}
         </div>
     );
 };
 
 const UploadTab = () => {
-    const { isLoading, setImageUrl, startSearch } = useUploadImage();
+    const { error, isLoading, uploadAndSearch } = useUploadImage();
     const [dragActive, setDragActive] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -115,12 +146,6 @@ const UploadTab = () => {
         } else if (e.type === "dragleave") {
             setDragActive(false);
         }
-    };
-
-    const uploadAndSearchFile = async (file: File | string) => {
-        const safeUrl = await uploadFile(file);
-        setImageUrl(safeUrl);
-        startSearch(safeUrl);
     };
 
     const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -136,45 +161,50 @@ const UploadTab = () => {
         setDragActive(false);
         const files = e.dataTransfer?.files;
         if (files?.[0]) {
-            uploadAndSearchFile(files[0]);
+            await uploadAndSearch(files[0]);
         }
     };
 
     const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files?.[0]) {
-            uploadAndSearchFile(e.target.files[0]);
+            await uploadAndSearch(e.target.files[0]);
         }
     };
 
     return (
-        <div
-            onDragEnter={handleDrag}
-            onDragLeave={handleDrag}
-            onDragOver={handleDrag}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-            onKeyDown={handleKeyDown}
-            role="button"
-            tabIndex={0}
-            className={`flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors ${
-                dragActive ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
-            }`}
-        >
-            <input
-                ref={fileInputRef}
-                type="file"
-                className="hidden"
-                onChange={handleChange}
-                accept="image/*,video/*"
-            />
-            {isLoading ? (
-                <Spinner className="mb-4 h-12 w-12 text-muted-foreground" />
-            ) : (
-                <Upload className="mb-4 h-12 w-12 text-muted-foreground" />
-            )}
+        <div className="space-y-2">
+            <div
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                onKeyDown={handleKeyDown}
+                role="button"
+                tabIndex={0}
+                className={`flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors ${
+                    dragActive
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:border-primary/50"
+                }`}
+            >
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    className="hidden"
+                    onChange={handleChange}
+                    accept="image/*,video/*"
+                />
+                {isLoading ? (
+                    <Spinner className="mb-4 h-12 w-12 text-muted-foreground" />
+                ) : (
+                    <Upload className="mb-4 h-12 w-12 text-muted-foreground" />
+                )}
 
-            <p className="mb-2 text-sm font-medium">Drop your image or video here</p>
-            <p className="text-xs text-muted-foreground">or click to browse</p>
+                <p className="mb-2 text-sm font-medium">Drop your image or video here</p>
+                <p className="text-xs text-muted-foreground">or click to browse</p>
+            </div>
+            {error ? <p className="text-sm text-red-500">{error}</p> : null}
         </div>
     );
 };

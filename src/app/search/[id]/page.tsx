@@ -12,8 +12,9 @@ const Page = async (props: PageProps) => {
     const params = await props.params;
     const caller = await createCaller();
 
-    const search = await caller.search.readSearchWithResults({
+    const search = await caller.search.getSearch({
         id: params.id,
+        results: true,
     });
 
     if (!search) return;

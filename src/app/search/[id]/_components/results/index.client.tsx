@@ -21,8 +21,8 @@ const RunStatus = ({
     });
 
     const { data: search } = useQuery(
-        trpc.search.readSearchWithResults.queryOptions(
-            { id: searchId },
+        trpc.search.getSearch.queryOptions(
+            { id: searchId, results: true },
             { enabled: run?.status === "COMPLETED" },
         ),
     );
