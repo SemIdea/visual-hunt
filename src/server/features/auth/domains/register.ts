@@ -22,10 +22,7 @@ export const domain_register = async ({
         });
     }
 
-    const passwordHash = await hashPassword(
-        params.password,
-        ctx.env.AUTH_USER_BCRYPT_COST,
-    );
+    const passwordHash = await hashPassword(params.password, ctx.env.auth.user.bcrypt.cost);
 
     const user = await ctx.db.user.create({
         data: {

@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client/edge";
 import { task } from "@trigger.dev/sdk";
 import { getJson } from "serpapi";
 import { v4 } from "uuid";
+import { PrismaClient } from "@/generated/prisma/edge";
 import { env } from "@/server/lib/env";
 import type { IResult } from "./types";
 

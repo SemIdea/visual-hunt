@@ -40,7 +40,7 @@ const PricingProvider = ({ children }: { children: ReactNode }) => {
     const { mutate } = useMutation(
         trpc.checkout.create.mutationOptions({
             onSuccess(data) {
-                if (data.url) router.push(data.url);
+                router.push(data);
             },
         }),
     );

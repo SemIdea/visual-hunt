@@ -11,7 +11,7 @@ const userResultSchema = z.object({
         .object({
             stripePriceId: z.string(),
             status: z.string(),
-            currentPeriodEnd: z.date(),
+            currentPeriodEnd: z.string(),
         })
         .nullable(),
 });
@@ -39,7 +39,7 @@ export const procedure_me = protectedProcedure
                     ? {
                           stripePriceId: user.subscription.stripePriceId,
                           status: user.subscription.status,
-                          currentPeriodEnd: user.subscription.currentPeriodEnd,
+                          currentPeriodEnd: user.subscription.currentPeriodEnd.toISOString(),
                       }
                     : null,
             },

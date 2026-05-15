@@ -9,6 +9,9 @@ export const createStripePaymentAdapter = (stripe: Stripe): PaymentAdapter => ({
             metadata: { userId: input.userId },
             payment_method_types: ["card"],
             mode: "subscription",
+            subscription_data: {
+                metadata: { userId: input.userId },
+            },
             success_url: input.successUrl,
             cancel_url: input.cancelUrl,
             adaptive_pricing: { enabled: true },

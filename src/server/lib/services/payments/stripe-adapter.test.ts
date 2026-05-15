@@ -35,6 +35,9 @@ describe("StripePaymentAdapter", () => {
             metadata: { userId: "user_1" },
             payment_method_types: ["card"],
             mode: "subscription",
+            subscription_data: {
+                metadata: { userId: "user_1" },
+            },
             success_url: "https://example.com/success",
             cancel_url: "https://example.com/cancel",
             adaptive_pricing: { enabled: true },

@@ -13,7 +13,7 @@ export const procedure_createCheckoutSession = protectedProcedure
             ctx,
             input: {
                 priceId: input.priceId,
-                userId: ctx.session.user?.id ?? "",
+                userId: ctx.session.userId,
             },
         });
     });

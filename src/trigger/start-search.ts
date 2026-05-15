@@ -1,6 +1,6 @@
-import { SearchStatus } from "@prisma/client/edge";
 import { task } from "@trigger.dev/sdk";
 import { v4 } from "uuid";
+import { SearchStatus } from "@/generated/prisma/edge";
 import { env } from "./lib/env";
 import { getPrisma } from "./lib/prisma";
 import { fetchScrapingDogResults } from "./lib/scrapingdog";

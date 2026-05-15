@@ -1,7 +1,7 @@
-import { PrismaClient, SearchStatus } from "@prisma/client/edge";
 import { task } from "@trigger.dev/sdk";
-import { helpers } from "@/server/container/helpers";
-import type { IResultEntity } from "@/server/entities/result/DTO";
+import { v4 } from "uuid";
+import { PrismaClient, SearchStatus } from "@/generated/prisma/edge";
+import type { ResultEntity } from "@/server/features/search/types";
 import type { IResult } from "./types";
 
 const prisma = new PrismaClient();
@@ -46,9 +46,9 @@ export const googleLensSearch = task({
             };
         }
 
-        const resultsToCreate: IResultEntity[] = data.lens_results.map(
+        const resultsToCreate: ResultEntity[] = data.lens_results.map(
             (result: IResult, index: number) => ({
-                id: helpers.uid.generate(),
+                id: v4(),
                 searchId: payload.searchId,
                 title: result.title,
                 source: result.source,
