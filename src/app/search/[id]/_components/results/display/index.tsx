@@ -1,9 +1,9 @@
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import type { IResultEntity } from "@/server/entities/result/DTO";
+import type { ResultEntity } from "@/server/features/search/types";
 
-const DisplayResults = ({ results }: { results: IResultEntity[] }) => {
+const DisplayResults = ({ results }: { results: ResultEntity[] }) => {
     return (
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
             {results.map((result) => (

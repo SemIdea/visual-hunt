@@ -14,6 +14,7 @@ export const domain_startSearch = async ({
         imageUrl: input.imageUrl,
         searchId,
     });
+    const publicAccessToken = await ctx.tasks.createPublicToken(job.id);
 
     const search = await ctx.db.search.create({
         data: {
@@ -22,7 +23,7 @@ export const domain_startSearch = async ({
             userId: input.userId,
             status: "PENDING",
             jobId: job.id,
-            publicAccessToken: "",
+            publicAccessToken,
         },
     });
 
@@ -30,5 +31,6 @@ export const domain_startSearch = async ({
         jobId: job.id,
         searchId: search.id,
         imageUrl: input.imageUrl,
+        publicAccessToken,
     };
 };

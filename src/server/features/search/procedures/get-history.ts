@@ -1,13 +1,9 @@
-import { z } from "zod";
-import { publicProcedure } from "@/server/root";
+import { protectedProcedure } from "@/server/root";
 import { domain_getSearchHistory } from "../domain/get-history";
 
-export const procedure_getSearchHistory = publicProcedure
-    .input(
-        z.object({
-            userId: z.string().nonempty("User ID is required"),
-        }),
-    )
-    .query(async ({ ctx, input }) => {
-        return await domain_getSearchHistory({ ctx, input });
+export const procedure_getSearchHistory = protectedProcedure.query(async ({ ctx }) => {
+    return await domain_getSearchHistory({
+        ctx,
+        input: { userId: ctx.session.userId },
     });
+});

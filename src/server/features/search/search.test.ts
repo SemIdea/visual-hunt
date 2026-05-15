@@ -30,6 +30,7 @@ vi.mock("@/server/lib/prisma", () => ({
 }));
 vi.mock("@/server/lib/tasks", () => ({
     taskRegistry: {
+        createPublicToken: vi.fn().mockResolvedValue("public_token"),
         startSearch: {
             trigger: vi.fn().mockResolvedValue({ id: "job_mock" }),
         },
@@ -85,6 +86,7 @@ describe("search.startSearch", () => {
         expect(result).toHaveProperty("jobId", "job_mock");
         expect(result).toHaveProperty("searchId", "search_mock");
         expect(result).toHaveProperty("imageUrl", "https://example.com/img.jpg");
+        expect(result).toHaveProperty("publicAccessToken", "public_token");
     });
 
     it("rejects invalid URL", async () => {

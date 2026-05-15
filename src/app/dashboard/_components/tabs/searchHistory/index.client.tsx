@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { useTRPC } from "@/lib/trpc/client";
-import type { ISearchEntity } from "@/server/entities/search/DTO";
+import type { SearchEntity } from "@/server/features/search/types";
 
 const getStatusVariant = (status: string) => {
     switch (status) {
@@ -24,9 +24,9 @@ const getStatusVariant = (status: string) => {
     }
 };
 
-const SearchHistory = ({ searches }: { searches: ISearchEntity[] | [] }) => {
+const SearchHistory = ({ searches }: { searches: SearchEntity[] | [] }) => {
     const trpc = useTRPC();
-    const [searchList, setSearchList] = useState<ISearchEntity[]>(searches);
+    const [searchList, setSearchList] = useState<SearchEntity[]>(searches);
     const [deleteingId, setDeletingId] = useState<string | null>(null);
 
     const { mutate: deleteSearchMutation } = useMutation(

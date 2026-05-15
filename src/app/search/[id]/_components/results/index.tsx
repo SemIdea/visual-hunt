@@ -1,8 +1,8 @@
-import type { ISearchEntityWithResults } from "@/server/entities/search/DTO";
+import type { SearchEntityWithResults } from "@/server/features/search/types";
 import DisplayResults from "./display";
 import RunStatus from "./index.client";
 
-const Results = ({ search }: { search: ISearchEntityWithResults }) => {
+const Results = ({ search }: { search: SearchEntityWithResults }) => {
     return (
         <div className="mb-6">
             <h1 className="text-3xl font-bold text-foreground mb-6">Search Results</h1>

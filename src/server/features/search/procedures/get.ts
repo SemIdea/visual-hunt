@@ -18,3 +18,19 @@ export const procedure_getSearch = publicProcedure
             },
         });
     });
+
+export const procedure_readSearchWithResults = publicProcedure
+    .input(
+        z.object({
+            id: z.string().nonempty("ID is required"),
+        }),
+    )
+    .query(async ({ ctx, input }) => {
+        return await domain_getSearch({
+            ctx,
+            input: {
+                id: input.id,
+                results: true,
+            },
+        });
+    });

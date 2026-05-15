@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { publicProcedure } from "@/server/root";
+import { protectedProcedure } from "@/server/root";
 import { domain_searchWithUrl } from "../domain/with-url";
 
-export const procedure_searchWithUrl = publicProcedure
+export const procedure_searchWithUrl = protectedProcedure
     .input(
         z.object({
             url: z
@@ -10,7 +10,6 @@ export const procedure_searchWithUrl = publicProcedure
                     protocol: /^https?$/,
                 })
                 .nonempty("URL is required"),
-            userId: z.string().nonempty("User ID is required"),
         }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -18,7 +17,7 @@ export const procedure_searchWithUrl = publicProcedure
             ctx,
             input: {
                 url: input.url,
-                userId: input.userId,
+                userId: ctx.session.userId,
             },
         });
     });

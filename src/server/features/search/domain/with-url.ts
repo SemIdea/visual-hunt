@@ -1,4 +1,3 @@
-import { auth, tasks } from "@trigger.dev/sdk";
 import { v4 } from "uuid";
 import type { TRPCContext } from "@/server/root";
 
@@ -11,19 +10,11 @@ export const domain_searchWithUrl = async ({
 }) => {
     const searchId = v4();
 
-    const job = await tasks.trigger("scraping-dog-google-lens", {
+    const job = await ctx.tasks.startSearch.trigger({
         searchId,
         imageUrl: input.url,
-        type: "exact_matches",
     });
-
-    const publicAccessToken = await auth.createPublicToken({
-        scopes: {
-            read: {
-                runs: job.id,
-            },
-        },
-    });
+    const publicAccessToken = await ctx.tasks.createPublicToken(job.id);
 
     const search = await ctx.db.search.create({
         data: {

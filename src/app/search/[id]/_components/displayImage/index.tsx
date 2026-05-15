@@ -4,9 +4,9 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/lib/auth/context";
-import type { ISearchEntity } from "@/server/entities/search/DTO";
+import type { SearchEntity } from "@/server/features/search/types";
 
-const DisplayImage = ({ search }: { search: ISearchEntity }) => {
+const DisplayImage = ({ search }: { search: SearchEntity }) => {
     const { user } = useAuth();
 
     return (
