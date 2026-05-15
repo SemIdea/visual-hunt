@@ -60,4 +60,4 @@ COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/src/generated ./src/generated
 
-CMD ["npm", "start"]
+CMD ["sh", "-c", "npm exec prisma migrate deploy && npm start"]
