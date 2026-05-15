@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { publicProcedure } from "@/server/root";
+import { protectedProcedure } from "@/server/root";
 import { domain_getSearch } from "../domain/get";
 
-export const procedure_getSearch = publicProcedure
+export const procedure_getSearch = protectedProcedure
     .input(
         z.object({
             id: z.string().nonempty("ID is required"),
@@ -14,23 +14,8 @@ export const procedure_getSearch = publicProcedure
             ctx,
             input: {
                 id: input.id,
+                userId: ctx.session.userId,
                 results: input.results,
-            },
-        });
-    });
-
-export const procedure_readSearchWithResults = publicProcedure
-    .input(
-        z.object({
-            id: z.string().nonempty("ID is required"),
-        }),
-    )
-    .query(async ({ ctx, input }) => {
-        return await domain_getSearch({
-            ctx,
-            input: {
-                id: input.id,
-                results: true,
             },
         });
     });

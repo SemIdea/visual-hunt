@@ -6,10 +6,10 @@ export const domain_getSearch = async ({
     input,
 }: {
     ctx: TRPCContext;
-    input: { id: string; results?: boolean };
+    input: { id: string; userId: string; results?: boolean };
 }) => {
-    const search = await ctx.db.search.findUnique({
-        where: { id: input.id },
+    const search = await ctx.db.search.findFirst({
+        where: { id: input.id, userId: input.userId },
         include: {
             ...(input.results ? { results: true } : {}),
         },
