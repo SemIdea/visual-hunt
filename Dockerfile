@@ -1,69 +1,50 @@
-# Base image
-ARG NODE_VERSION=current-alpine
+ARG NODE_VERSION=22-alpine
 FROM node:${NODE_VERSION} AS base
 
-# Environment setup
-ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Enable Corepack so pnpm is available in all stages
-RUN corepack enable
-
-# Create a non-root user
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs \
+  && adduser --system --uid 1001 nextjs
 
 WORKDIR /app
 EXPOSE 3000
 
-# Dependencies stage
 FROM base AS deps
 
 RUN apk update \
   && apk add --no-cache openssl curl libc6-compat \
-  && rm -rf /var/lib/apt/lists/* /var/cache/apk/*
+  && rm -rf /var/cache/apk/*
 
-WORKDIR /app
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json package-lock.json ./
 COPY prisma ./prisma
 
-RUN pnpm install --frozen-lockfile --prefer-offline \
-  && pnpm exec prisma generate
+RUN npm ci \
+  && npm exec prisma generate
 
-# Test stage
 FROM base AS test
 WORKDIR /app
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm ci
 COPY . .
-CMD ["sh", "-c", "pnpm exec prisma db push && pnpm test"]
+CMD ["sh", "-c", "npm exec prisma db push && npm test"]
 
-
-# Development image
 FROM base AS dev
 WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
 COPY . .
-RUN pnpm install
-CMD ["sh", "-c", "pnpm exec prisma db push && pnpm dev"]
+CMD ["sh", "-c", "npm exec prisma db push && npm run dev"]
 
-# Builder stage
 FROM base AS builder
-
 WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-# Install ALL dependencies (including devDependencies) needed for build
-RUN NODE_ENV=development pnpm install --frozen-lockfile
-
-# Set production environment for the build process
 ENV NODE_ENV=production
 
-COPY . .
+RUN npm exec prisma generate
+RUN npm run build
 
-RUN pnpm exec prisma generate
-RUN pnpm build
-
-# Production image
 FROM base AS production
 
 ENV NODE_ENV=production
@@ -71,6 +52,12 @@ ENV NODE_ENV=production
 WORKDIR /app
 USER nextjs
 
-COPY --from=builder --chown=nextjs:nodejs /app/. .
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nextjs:nodejs /app/package-lock.json ./package-lock.json
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/src/generated ./src/generated
 
-CMD ["sh", "-c", "pnpm exec prisma db push && pnpm start"]
+CMD ["npm", "start"]
