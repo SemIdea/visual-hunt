@@ -1,112 +1,85 @@
 # Visual Hunt
 
-SaaS de busca visual reversa com Next.js, tRPC, Prisma/Postgres, Redis, Trigger.dev, Stripe, Cloudinary e ScrapingDog.
+Reverse image search as a SaaS — upload an image and find where it appears online, on a
+subscription. Built as a full-stack engineering study: type-safe end to end, long-running work
+in background jobs, payments, and a layered backend.
 
-## Requisitos
+> **Portfolio / study project.** It is not a hosted service and there is no public deploy.
+> See [Legal](#legal).
 
-- Node.js 22+
-- npm
-- PostgreSQL
-- Redis
-- Conta/configuracao para Trigger.dev, Stripe, Cloudinary e ScrapingDog
+## What it does
 
-## Ambiente
+1. Upload an image (Cloudinary) and start a reverse search.
+2. A background task (Trigger.dev) calls a reverse-image-search provider and stores the results.
+3. Results are listed per search. The free tier is limited; paid tiers are Stripe subscriptions.
+4. Auth with access + refresh tokens, Redis-backed sessions, and rate limiting.
 
-Crie um `.env` com os valores usados por `src/server/lib/env.ts`:
+## Architecture
 
-```env
-NEXT_PUBLIC_URL=http://localhost:3000
-DATABASE_URL=postgresql://user:password@localhost:5432/visual_hunt
-REDIS_URL=redis://localhost:6379
+```
+Next.js App Router
+  └── tRPC procedure ── domain ── repository (Prisma) ── PostgreSQL
+                                  └── Redis (session cache, dedup)
+  └── Trigger.dev task (start-search)
+          └── provider adapter (ScrapingDog / Google Lens)
 
-AUTH_SESSION_ACCESS_SECRET=change-me
-AUTH_SESSION_REFRESH_SECRET=change-me
-AUTH_TOKEN_BYTE_LENGTH=32
-AUTH_ACCESS_TOKEN_TTL=15m
-AUTH_REFRESH_TOKEN_TTL=7d
-AUTH_SESSION_CACHE_TTL=5m
-AUTH_SESSION_CACHE_KEY_PREFIX=session:
-AUTH_USER_BCRYPT_COST=12
-AUTH_RATE_LIMIT_MAX=10
-AUTH_RATE_LIMIT_WINDOW_MS=15s
-
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
-TRIGGER_SECRET_KEY=
-SCRAPING_DOG_API_KEY=
-SERP_API_KEY=
-CLOUDINARY_URL=
-CLOUDINARY_API_SECRET=
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
-NEXT_PUBLIC_CLOUDINARY_API_KEY=
+Stripe (subscriptions + webhook) · Cloudinary (media)
 ```
 
-## Rodando Localmente
+- **tRPC v11** for end-to-end types — no schema layer, so the client and the server cannot drift.
+- **Prisma 7 + PostgreSQL** for persistence; **Redis** for the session cache and dedup.
+- **Trigger.dev** runs the search outside the request lifecycle, so a slow provider never blocks a request.
+- **Stripe** subscriptions with a webhook that keeps `User.stripeCustomerId` and `Subscription` current.
+- **Zod** at the boundaries, **Vitest** for tests, **Biome** for lint/format, **Docker** for local and prod.
+
+## Stack
+
+Next.js 15 · React 19 · TypeScript · tRPC v11 · Prisma 7 · PostgreSQL · Redis (ioredis) ·
+Trigger.dev · Stripe · Cloudinary · Tailwind CSS 4 · Radix UI · Zod · Vitest · Biome · Docker
+
+## Run locally
+
+Requires **Node 22+**, **PostgreSQL** and **Redis**. You also need accounts/keys for Trigger.dev,
+Stripe, Cloudinary and the reverse-search provider.
+
+1. Create a `.env` from [`example.env`](./example.env) and fill it in.
+2. Install and prepare the database:
+
+   ```bash
+   npm install
+   npm run prisma:generate
+   npm run prisma:migrate:dev
+   ```
+
+3. Start the app, and in another terminal the Trigger.dev worker:
+
+   ```bash
+   npm run dev
+   npm run trigger:dev
+   ```
+
+## External flows
+
+- **Stripe webhook** → point it at `/api/webhook/stripe`; handle `checkout.session.completed` and the subscription events.
+- **Trigger.dev** → the main task is `start-search`; the server enqueues it from `src/server/lib/tasks.ts`.
+- **Cloudinary** → keep an upload preset named `default_visual` for the home flow.
+- **Search provider** → isolated in `src/trigger/lib/scrapingdog.ts`. A provider failure ends the search with a terminal status instead of breaking the app.
+
+## Validation
 
 ```bash
-npm install
-npm run prisma:generate
-npm run prisma:migrate:dev
-npm run dev
+npm run lint && npx tsc --noEmit && npm test && npm run build
 ```
 
-Se você quiser inspecionar ou ajustar o schema durante o desenvolvimento:
+## Legal
 
-```bash
-npm run prisma:studio
-```
+This is an educational, portfolio project — not a hosted service, and **not affiliated with Google**.
 
-Em outro terminal, rode o worker do Trigger quando precisar processar buscas:
+Reverse image search here goes through third-party scraping providers (ScrapingDog, SerpAPI).
+Operating a public service on top of them may violate their terms and Google's, and re-publishing
+images found online may raise copyright issues. The repository ships **no** credentials and
+operates nothing: bring your own keys and comply with every provider's terms.
 
-```bash
-npm run trigger:dev
-```
+## License
 
-## Fluxos Externos
-
-### Stripe webhook
-
-1. Configure `STRIPE_SECRET_KEY` e `STRIPE_WEBHOOK_SECRET`.
-2. Aponte o endpoint do Stripe para `/api/webhook/stripe`.
-3. Envie `checkout.session.completed` e eventos de assinatura.
-4. Confirme que `User.stripeCustomerId` e `Subscription` foram atualizados.
-
-### Trigger.dev
-
-1. Configure `TRIGGER_SECRET_KEY`.
-2. Rode `npm run trigger:dev` em desenvolvimento.
-3. Confirme que `trigger.config.ts` aponta para `dirs: ["./src/trigger"]`.
-4. A task principal é `start-search`; o servidor dispara via `src/server/lib/tasks.ts`.
-
-### Cloudinary
-
-1. Configure `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `NEXT_PUBLIC_CLOUDINARY_API_KEY` e `CLOUDINARY_API_SECRET`.
-2. Mantenha um upload preset chamado `default_visual` para o fluxo atual da home.
-3. URLs remotas podem falhar na importação; o app deve mostrar erro de upload antes de iniciar a busca.
-
-### ScrapingDog / Google Lens
-
-1. Configure `SCRAPING_DOG_API_KEY`.
-2. O provider fica isolado em `src/trigger/lib/scrapingdog.ts`.
-3. Falhas do provider devem encerrar a busca com status terminal, sem quebrar o app Next.
-
-## Validacao
-
-```bash
-npm run lint
-npx tsc --noEmit
-npm test
-npm run build
-npm audit
-```
-
-## Docker
-
-O projeto usa `npm` e `package-lock.json`.
-
-```bash
-npm run docker:dev
-```
-
-No target de produção, o container roda `prisma migrate deploy` antes de `npm start`.
-Em deploy gerenciado, prefira rodar a mesma migração como etapa explícita de release.
+[MIT](./LICENSE)
