@@ -19,7 +19,7 @@ const HowItWorks = () => {
                     </div>
                     <div className="mb-2 text-sm font-semibold text-primary">Step 1</div>
                     <h3 className="mb-3 text-xl font-bold">Upload or Paste</h3>
-                    <p className="text-muted-foreground">Provide any image, video clip, or URL.</p>
+                    <p className="text-muted-foreground">Provide an image file or an image URL.</p>
                 </Card>
 
                 <Card className="border-border/50 bg-card/50 p-8 text-center backdrop-blur">
@@ -29,9 +29,9 @@ const HowItWorks = () => {
                         </div>
                     </div>
                     <div className="mb-2 text-sm font-semibold text-primary">Step 2</div>
-                    <h3 className="mb-3 text-xl font-bold">We Analyze</h3>
+                    <h3 className="mb-3 text-xl font-bold">We Search</h3>
                     <p className="text-muted-foreground">
-                        Our AI searches across multiple engines simultaneously.
+                        A background job runs the reverse-image search for you.
                     </p>
                 </Card>
 

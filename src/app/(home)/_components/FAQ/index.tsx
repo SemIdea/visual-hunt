@@ -18,9 +18,8 @@ const FAQ = () => {
                             Is VisualHunt free to use?
                         </AccordionTrigger>
                         <AccordionContent className="text-muted-foreground">
-                            Yes! VisualHunt offers a free tier with limited searches per day. For
-                            unlimited searches and advanced features like video search and search
-                            history, you can upgrade to our Pro plan.
+                            Yes. The free tier has a daily search limit and keeps your search
+                            history. The paid plan removes the daily limit.
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-2">
@@ -28,10 +27,10 @@ const FAQ = () => {
                             How is this different from Google Image Search?
                         </AccordionTrigger>
                         <AccordionContent className="text-muted-foreground">
-                            VisualHunt queries multiple specialized search engines simultaneously,
-                            including databases that Google doesn&apos;t index. We also offer true
-                            video search by analyzing individual frames, which Google Image Search
-                            cannot do.
+                            It isn&apos;t trying to be. VisualHunt is a portfolio project built to
+                            practice a real async architecture — background jobs, webhooks,
+                            per-user auth — on top of a genuine reverse-image-search provider, not
+                            a proprietary index.
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-3">
@@ -39,9 +38,10 @@ const FAQ = () => {
                             Are my searches private?
                         </AccordionTrigger>
                         <AccordionContent className="text-muted-foreground">
-                            Absolutely. We don&apos;t store your uploaded images or search queries
-                            beyond what&apos;s necessary to process your request. All data is
-                            encrypted in transit and deleted after processing.
+                            No. Uploaded images go through Cloudinary and results are stored so
+                            they show up in your search history — nothing is anonymized or
+                            auto-deleted. This is a portfolio/study project, not a service you
+                            should upload sensitive images to.
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>

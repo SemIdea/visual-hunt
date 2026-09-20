@@ -118,7 +118,7 @@ const UrlTab = () => {
         <div className="space-y-2">
             <div className="flex gap-2">
                 <Input
-                    placeholder="Paste image or video URL..."
+                    placeholder="Paste an image URL..."
                     className="flex-1"
                     value={imageUrl}
                     onChange={(e) => setImageUrl(e.target.value)}
@@ -193,7 +193,7 @@ const UploadTab = () => {
                     type="file"
                     className="hidden"
                     onChange={handleChange}
-                    accept="image/*,video/*"
+                    accept="image/*"
                 />
                 {isLoading ? (
                     <Spinner className="mb-4 h-12 w-12 text-muted-foreground" />
@@ -201,7 +201,7 @@ const UploadTab = () => {
                     <Upload className="mb-4 h-12 w-12 text-muted-foreground" />
                 )}
 
-                <p className="mb-2 text-sm font-medium">Drop your image or video here</p>
+                <p className="mb-2 text-sm font-medium">Drop your image here</p>
                 <p className="text-xs text-muted-foreground">or click to browse</p>
             </div>
             {error ? <p className="text-sm text-red-500">{error}</p> : null}
