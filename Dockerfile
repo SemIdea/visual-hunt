@@ -1,5 +1,5 @@
-ARG NODE_VERSION=22-alpine
-FROM node:${NODE_VERSION} AS base
+ARG BUN_VERSION=1-alpine
+FROM oven/bun:${BUN_VERSION} AS base
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -15,25 +15,25 @@ RUN apk update \
   && apk add --no-cache openssl curl libc6-compat \
   && rm -rf /var/cache/apk/*
 
-COPY package.json package-lock.json ./
+COPY package.json bun.lock ./
 COPY prisma ./prisma
 
-RUN npm ci \
-  && npm exec prisma generate
+RUN bun install --frozen-lockfile \
+  && bunx prisma generate
 
 FROM base AS test
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 COPY . .
-CMD ["sh", "-c", "npm exec prisma db push && npm test"]
+CMD ["sh", "-c", "bunx prisma db push && bun run test"]
 
 FROM base AS dev
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 COPY . .
-CMD ["sh", "-c", "npm exec prisma db push && npm run dev"]
+CMD ["sh", "-c", "bunx prisma db push && bun run dev"]
 
 FROM base AS builder
 WORKDIR /app
@@ -42,8 +42,8 @@ COPY . .
 
 ENV NODE_ENV=production
 
-RUN npm exec prisma generate
-RUN npm run build
+RUN bunx prisma generate
+RUN bun run build
 
 FROM base AS production
 
@@ -55,9 +55,9 @@ USER nextjs
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
-COPY --from=builder --chown=nextjs:nodejs /app/package-lock.json ./package-lock.json
+COPY --from=builder --chown=nextjs:nodejs /app/bun.lock ./bun.lock
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/src/generated ./src/generated
 
-CMD ["sh", "-c", "npm exec prisma migrate deploy && npm start"]
+CMD ["sh", "-c", "bunx prisma migrate deploy && bun run start"]

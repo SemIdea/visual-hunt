@@ -35,27 +35,28 @@ Stripe (subscriptions + webhook) · Cloudinary (media)
 ## Stack
 
 Next.js 15 · React 19 · TypeScript · tRPC v11 · Prisma 7 · PostgreSQL · Redis (ioredis) ·
-Trigger.dev · Stripe · Cloudinary · Tailwind CSS 4 · Radix UI · Zod · Vitest · Biome · Docker
+Trigger.dev · Stripe · Cloudinary · Tailwind CSS 4 · Radix UI · Zod · Vitest · Biome · Docker ·
+Bun (package manager)
 
 ## Run locally
 
-Requires **Node 22+**, **PostgreSQL** and **Redis**. You also need accounts/keys for Trigger.dev,
+Requires **Bun 1.4+**, **PostgreSQL** and **Redis**. You also need accounts/keys for Trigger.dev,
 Stripe, Cloudinary and the reverse-search provider.
 
 1. Create a `.env` from [`example.env`](./example.env) and fill it in.
 2. Install and prepare the database:
 
    ```bash
-   npm install
-   npm run prisma:generate
-   npm run prisma:migrate:dev
+   bun install
+   bun run prisma:generate
+   bun run prisma:migrate:dev
    ```
 
 3. Start the app, and in another terminal the Trigger.dev worker:
 
    ```bash
-   npm run dev
-   npm run trigger:dev
+   bun run dev
+   bun run trigger:dev
    ```
 
 ## External flows
@@ -68,7 +69,7 @@ Stripe, Cloudinary and the reverse-search provider.
 ## Validation
 
 ```bash
-npm run lint && npx tsc --noEmit && npm test && npm run build
+bun run lint && bunx tsc --noEmit && bun run test && bun run build
 ```
 
 ## Legal

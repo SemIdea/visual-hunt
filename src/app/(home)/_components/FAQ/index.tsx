@@ -28,9 +28,9 @@ const FAQ = () => {
                         </AccordionTrigger>
                         <AccordionContent className="text-muted-foreground">
                             It isn&apos;t trying to be. VisualHunt is a portfolio project built to
-                            practice a real async architecture — background jobs, webhooks,
-                            per-user auth — on top of a genuine reverse-image-search provider, not
-                            a proprietary index.
+                            practice a real async architecture — background jobs, webhooks, per-user
+                            auth — on top of a genuine reverse-image-search provider, not a
+                            proprietary index.
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-3">
@@ -38,10 +38,10 @@ const FAQ = () => {
                             Are my searches private?
                         </AccordionTrigger>
                         <AccordionContent className="text-muted-foreground">
-                            No. Uploaded images go through Cloudinary and results are stored so
-                            they show up in your search history — nothing is anonymized or
-                            auto-deleted. This is a portfolio/study project, not a service you
-                            should upload sensitive images to.
+                            No. Uploaded images go through Cloudinary and results are stored so they
+                            show up in your search history — nothing is anonymized or auto-deleted.
+                            This is a portfolio/study project, not a service you should upload
+                            sensitive images to.
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>

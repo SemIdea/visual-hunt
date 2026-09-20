@@ -23,7 +23,7 @@
 
 ## Tests
 
-- Tests run with a single command: `npm run test`.
+- Tests run with a single command: `bun run test`.
 - Every new function gets a test. Bug fixes get a regression test.
 - Mock external I/O (API, DB, filesystem) with named fake classes,
   not inline stubs.
@@ -52,15 +52,22 @@
 
 ## AFM
 
-- Canonical process lives in `docs/afm.md`.
+- Canonical AFM adopted from the `afm` plugin retroactively on 2026-08-31
+  (plugin v3.5.0-rc.1, recorded in `docs/.afm-version`). The pre-existing
+  hand-adapted docs (see ADR-0001) are the source of truth and were kept
+  as-is; adoption only added the version marker, `docs/rubrics/`, and
+  `afm.md` § 3.1.
+- Canonical process lives in `docs/afm.md` (§ 3 hard rules + § 3.1 forward-only).
 - Use `docs/prd.md` for product scope, `docs/ust.md` for user stories,
   `docs/ach.md` for architecture, `docs/gotchas.md` for known traps,
-  and `docs/adr/` for architectural decisions.
+  `docs/rubrics/` for decision tables (SOLID, error classification, when to
+  create lib/module/DSL, validation boundary), and `docs/adr/` for
+  architectural decisions.
 - Default loop: read the relevant docs first, understand the change in 2
   sentences, write or update a test for behavior changes, implement the
   smallest fix, refactor only after green, then validate with
-  `npm test`, `npx tsc --noEmit`, `npm run lint`, `npm run build`, and
-  `npm audit` when the change touches runtime or dependencies.
+  `bun run test`, `bunx tsc --noEmit`, `bun run lint`, `bun run build`, and
+  `bun audit` when the change touches runtime or dependencies.
 - Keep tasks small. If a change crosses boundaries or alters contracts,
   document the decision in an ADR before or alongside the code change.
 - Prefer the existing stack and folder layout in this repo:

@@ -37,16 +37,16 @@ Se este doc divergir do código atual, confira `docs/ach.md` e registre ajuste e
 ## 3. Regras Duras
 
 1. **Não commitar com type-check quebrado.**
-   Verificação: `npx tsc --noEmit`.
+   Verificação: `bunx tsc --noEmit`.
 
 2. **Não commitar com teste afetado quebrado.**
-   Verificação mínima: `npm test` ou teste específico durante o ciclo.
+   Verificação mínima: `bun run test` ou teste específico durante o ciclo.
 
 3. **Não commitar build quebrado em mudança que toca runtime/build/deps.**
-   Verificação: `npm run build`.
+   Verificação: `bun run build`.
 
 4. **Não deixar vulnerabilidade acionável sem decisão.**
-   Verificação: `npm audit`. Se não corrigir, registrar em `docs/gotchas.md` com severidade e motivo, ou em ADR se for decisão de contrato.
+   Verificação: `bun audit`. Se não corrigir, registrar em `docs/gotchas.md` com severidade e motivo, ou em ADR se for decisão de contrato.
 
 5. **Boundary valida input com Zod.**
    Procedures tRPC, webhook payloads e env parsing validam entrada antes de domain.
@@ -84,7 +84,25 @@ Se este doc divergir do código atual, confira `docs/ach.md` e registre ajuste e
     Sinais: `utils`, `manager`, `and`, múltiplos exports de camadas diferentes ou arquivo acima de 300 linhas fora de gerados/fixtures.
 
 16. **Dependência nova precisa de motivo.**
-    Commit/PR explica uso, alternativa e impacto. `npm audit` precisa continuar limpo ou risco documentado.
+    Commit/PR explica uso, alternativa e impacto. `bun audit` precisa continuar limpo ou risco documentado.
+
+## 3.1 Regras forward-only
+
+Adoção canônica do plugin `afm` via `/afm:refactor` em 2026-08-31. As regras da § 3 se aplicam a **código novo a partir desta data** e a **arquivos modificados** (boy-scout rule). Código legado que viole é tech-debt rastreado, não bloqueio de PR.
+
+Auditoria mecânica na adoção (gatilhos das regras § 3 rodados contra o código atual):
+
+| Regra | Gatilho | Resultado na adoção | Situação |
+| --- | --- | --- | --- |
+| 1 — type-check | `npx tsc --noEmit` | limpo | aplica desde já |
+| 15 — arquivo com responsabilidade difusa (>300 linhas) | `wc -l` em `src/**` (excl. `src/generated`) | 0 arquivos >300 linhas | aplica desde já |
+| 4/16 — audit | `: any` / `@ts-ignore` em `src/**` | 0 ocorrências | aplica desde já |
+| 6 — domain não cria singleton de infra | `rg "new PrismaClient\|new Redis\|new Stripe" src/server/features` | 0 ocorrências | aplica desde já |
+| 2 — teste proporcional ao risco | 19 arquivos de teste cobrindo domains/procedures/libs/tasks | proporcional (não é meta de cobertura fixa) | aplica desde já |
+
+**Nenhuma carve-out forward-only foi necessária:** o código já satisfaz as regras duras na data da adoção. A cláusula forward-only fica documentada como contrato — se um sweep futuro ou merge legado introduzir violação preexistente, ela é tech-debt rastreado (issue/ADR), não trava o PR do escopo em andamento.
+
+**Critério de boy-scout:** ao editar arquivo legado que viole uma regra da § 3, traz pra conformidade no mesmo PR quando o escopo justifica (não força refactor de 500 linhas pra corrigir typo). Senão, abre issue separada e linka.
 
 ## 4. Guidelines por Tipo de Mudança
 
@@ -92,7 +110,7 @@ Se este doc divergir do código atual, confira `docs/ach.md` e registre ajuste e
 
 1. Reproduzir em teste quando for regra de negócio, task, auth, billing ou parsing.
 2. Implementar fix mínimo.
-3. Rodar teste afetado, `npx tsc --noEmit` e lint quando tocar TS/React.
+3. Rodar teste afetado, `bunx tsc --noEmit` e lint quando tocar TS/React.
 4. Atualizar `docs/gotchas.md` se o risco permanecer e valer como surpresa operacional.
 
 ### Feature nova
@@ -121,11 +139,11 @@ Se este doc divergir do código atual, confira `docs/ach.md` e registre ajuste e
 
 - [ ] Story/RF relacionado está claro ou bug está documentado.
 - [ ] Teste novo/alterado cobre comportamento de risco.
-- [ ] `npm test` passa, ou falha remanescente está documentada com motivo.
-- [ ] `npx tsc --noEmit` passa.
-- [ ] `npm run lint` passa sem warnings novos relevantes.
-- [ ] `npm run build` passa quando mudança toca app, server, deps, Prisma ou Trigger.
-- [ ] `npm audit` passa ou risco está em `docs/gotchas.md` ou ADR.
+- [ ] `bun run test` passa, ou falha remanescente está documentada com motivo.
+- [ ] `bunx tsc --noEmit` passa.
+- [ ] `bun run lint` passa sem warnings novos relevantes.
+- [ ] `bun run build` passa quando mudança toca app, server, deps, Prisma ou Trigger.
+- [ ] `bun audit` passa ou risco está em `docs/gotchas.md` ou ADR.
 - [ ] Nenhum secret/token/senha foi logado.
 - [ ] Docs foram reconciliados quando escopo, arquitetura ou risco mudou.
 
@@ -134,11 +152,11 @@ Se este doc divergir do código atual, confira `docs/ach.md` e registre ajuste e
 Antes de push/release:
 
 ```sh
-npm test
-npx tsc --noEmit
-npm run lint
-npm run build
-npm audit
+bun run test
+bunx tsc --noEmit
+bun run lint
+bun run build
+bun audit
 ```
 
 Falhou: corrigir ou registrar explicitamente o bloqueio. Não enviar "meio verde" sem combinar.

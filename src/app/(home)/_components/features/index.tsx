@@ -9,8 +9,8 @@ const Features = () => {
                 <div>
                     <h2 className="mb-6 text-4xl font-bold md:text-5xl">A Real Reverse Search.</h2>
                     <p className="text-lg leading-relaxed text-muted-foreground">
-                        VisualHunt runs your upload through an actual reverse-image-search
-                        provider and lists where the image turns up, ranked by relevance.
+                        VisualHunt runs your upload through an actual reverse-image-search provider
+                        and lists where the image turns up, ranked by relevance.
                     </p>
                 </div>
                 <div className="relative">
@@ -46,8 +46,8 @@ const Features = () => {
                 <div className="order-1 md:order-2">
                     <h2 className="mb-6 text-4xl font-bold md:text-5xl">Runs in the Background.</h2>
                     <p className="text-lg leading-relaxed text-muted-foreground">
-                        Uploading doesn&apos;t block on the search. A background job does the
-                        work and updates the status, so a slow provider never freezes the page.
+                        Uploading doesn&apos;t block on the search. A background job does the work
+                        and updates the status, so a slow provider never freezes the page.
                     </p>
                 </div>
             </div>

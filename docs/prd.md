@@ -61,7 +61,7 @@ Proposta de valor em uma frase: *"Faça uma busca reversa uma vez e acompanhe re
 | RNF-03 | Resiliência | Tasks Trigger.dev devem ser idempotentes: retry não duplica resultados nem sobrescreve rastreadores imutáveis sem necessidade. |
 | RNF-04 | Observabilidade | Cada busca persiste `jobId` e `publicAccessToken` para acompanhamento do run. |
 | RNF-05 | Operação | Build de produção não deve exigir conexão ativa com Stripe/Redis até o recurso ser usado em runtime. |
-| RNF-06 | Qualidade | `npm test`, `npx tsc --noEmit`, `npm run lint`, `npm run build` e `npm audit` devem passar antes de release. |
+| RNF-06 | Qualidade | `bun run test`, `bunx tsc --noEmit`, `bun run lint`, `bun run build` e `bun audit` devem passar antes de release. |
 
 ## 6. Metas por Etapa
 
@@ -114,7 +114,7 @@ Proposta de valor em uma frase: *"Faça uma busca reversa uma vez e acompanhe re
 - Taxa de falha por provedor.
 - Custo médio por busca.
 - Erros de autenticação/checkout.
-- Vulnerabilidades do `npm audit`.
+- Vulnerabilidades do `bun audit`.
 
 ## 8. Riscos & Mitigações
 
@@ -122,7 +122,7 @@ Proposta de valor em uma frase: *"Faça uma busca reversa uma vez e acompanhe re
 | --- | --- | --- | --- |
 | APIs de busca visual mudam contrato, rate limit ou preço. | Alto | Alto | Encapsular provedores em `src/trigger/lib/*`, registrar falhas por fonte e adicionar fallback por provedor. |
 | Resultados de busca podem ser sensíveis. | Alto | Médio | Isolar por usuário, evitar logs de URLs privadas e definir retenção antes de produção. |
-| Trigger.dev ou dependências transitivas exigem override de segurança. | Médio | Médio | Manter `npm audit` limpo e revisar releases oficiais para remover overrides. |
+| Trigger.dev ou dependências transitivas exigem override de segurança. | Médio | Médio | Manter `bun audit` sem críticas e revisar releases oficiais para remover overrides. |
 | Cloudinary pode não importar algumas URLs remotas. | Médio | Médio | Suportar upload direto confiável e tratar erro de importação com mensagem clara. |
 
 ## 9. Não-Escopo v1

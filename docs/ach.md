@@ -219,11 +219,11 @@ Escala esperada:
 Comandos de validação:
 
 ```sh
-npm test
-npx tsc --noEmit
-npm run lint
-npm run build
-npm audit
+bun run test
+bunx tsc --noEmit
+bun run lint
+bun run build
+bun audit
 ```
 
 ## 8. Convenções
